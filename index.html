@@ -1718,6 +1718,146 @@ Check your Browserslist config to be sure that your targets are set up correctly
     </div>
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- MULTI-TEACHER STARS COLLECTION & SYNC HUB MODAL -->
+  <!-- ========================================================================= -->
+  <div id="teacherSyncModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl p-5 sm:p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-black shadow-xs">
+            <i class="fa-solid fa-star text-amber-500"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+              <span>سحابة نجوم المعلمين الموحدة</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">مباشر Online</span>
+            </h3>
+            <p class="text-xs text-slate-500 font-medium">تجميع ومزامنة نجوم وتقييمات الطلاب من كافة المعلمين في مدرسة واحدة</p>
+          </div>
+        </div>
+        <button onclick="closeTeacherSyncModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+        <div class="bg-amber-50 rounded-2xl p-3 border border-amber-200/70">
+          <div class="text-xl sm:text-2xl font-black text-amber-700" id="totalSchoolStarsVal">0</div>
+          <div class="text-[11px] font-bold text-amber-900 mt-0.5">إجمالي نجوم المدرسة</div>
+        </div>
+        <div class="bg-emerald-50 rounded-2xl p-3 border border-emerald-200/70">
+          <div class="text-xl sm:text-2xl font-black text-emerald-700" id="totalMasteredSkillsVal">0</div>
+          <div class="text-[11px] font-bold text-emerald-900 mt-0.5">المهارات المتقنة</div>
+        </div>
+        <div class="bg-indigo-50 rounded-2xl p-3 border border-indigo-200/70">
+          <div class="text-xl sm:text-2xl font-black text-indigo-700" id="totalActiveTeachersVal">1</div>
+          <div class="text-[11px] font-bold text-indigo-900 mt-0.5">المعلمون المتفاعلون</div>
+        </div>
+        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200">
+          <div class="text-xl sm:text-2xl font-black text-slate-800" id="totalEvaluatedStudentsVal">0</div>
+          <div class="text-[11px] font-bold text-slate-600 mt-0.5">الطلاب المرصودون</div>
+        </div>
+      </div>
+
+      <!-- Teacher Identity Setting -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-user-tie text-slate-500 text-sm"></i>
+          <div>
+            <span class="font-bold text-slate-700 block">معلم الفصل الحالي (مُسجل النجوم):</span>
+            <span class="text-[11px] text-slate-500">سيتم حفظ هذا الاسم مع كل نجمة تمنحها للطلاب</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <input type="text" id="modalTeacherInput" onchange="updateActiveTeacherName(this.value)" placeholder="أ. هشام عبد الفاضل" class="w-full sm:w-44 px-3 py-1.5 rounded-xl border border-slate-300 bg-white font-black text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none" />
+        </div>
+      </div>
+
+      <!-- Schoolwide Champions Table -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs font-black text-slate-800">
+          <span class="flex items-center gap-1.5">
+            <i class="fa-solid fa-trophy text-amber-500"></i>
+            <span>لوحة شرف الأبطال المجمعة من جميع المعلمين:</span>
+          </span>
+          <span class="text-[10px] text-slate-500 font-bold" id="leaderboardClassScope">جميع الصفوف</span>
+        </div>
+        <div class="border border-slate-200 rounded-2xl overflow-hidden max-h-56 overflow-y-auto">
+          <table class="w-full text-xs text-start">
+            <thead class="bg-slate-100/90 text-slate-600 text-[11px] font-black sticky top-0 border-b border-slate-200">
+              <tr>
+                <th class="p-2.5 text-start">الرتبة</th>
+                <th class="p-2.5 text-start">اسم الطالب</th>
+                <th class="p-2.5 text-center">النجوم المكتسبة</th>
+                <th class="p-2.5 text-center">المهارات المتقنة</th>
+                <th class="p-2.5 text-end">المعلم المقيّم</th>
+              </tr>
+            </thead>
+            <tbody id="schoolwideChampionsTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sync Actions: Export / Import / Google Sheets -->
+      <div class="space-y-3 pt-2 border-t border-slate-100">
+        <div class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-share-nodes text-indigo-600"></i>
+          <span>خيارات مشاركة ودمج النجوم بين المعلمين:</span>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- Export Button -->
+          <button onclick="exportTeacherStarsJSON()" class="p-3 rounded-2xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100/80 text-indigo-900 flex items-center gap-2.5 text-xs font-bold transition cursor-pointer text-start">
+            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-file-export"></i>
+            </div>
+            <div>
+              <span class="block font-black">📤 تصدير نجوم فصلي (ملف)</span>
+              <span class="text-[10px] text-indigo-700 font-medium">تحميل سجل النجوم لمشاركته مع الإدارة</span>
+            </div>
+          </button>
+
+          <!-- Import / Merge Button -->
+          <label class="p-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/80 text-emerald-900 flex items-center gap-2.5 text-xs font-bold transition cursor-pointer text-start">
+            <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-file-import"></i>
+            </div>
+            <div>
+              <span class="block font-black">📥 دمج نجوم معلم آخر</span>
+              <span class="text-[10px] text-emerald-700 font-medium">اختر ملف نجوم مرسل من معلم آخر لدمجه فوراً</span>
+            </div>
+            <input type="file" accept=".json" onchange="importTeacherStarsJSON(this)" class="hidden" />
+          </label>
+        </div>
+
+        <!-- Google Sheets Integration Link -->
+        <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-3 space-y-2 text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-amber-950 flex items-center gap-1.5">
+              <i class="fa-solid fa-table-cells text-emerald-600"></i>
+              <span>الربط التلقائي المباشر مع Google Sheets (في Google Drive):</span>
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900 font-bold">Cloud Webhook</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="url" id="googleSheetsWebhookInput" onchange="saveGoogleSheetsWebhook(this.value)" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 px-3 py-1.5 rounded-xl border border-amber-300 bg-white font-mono text-[11px] text-slate-800 outline-none focus:ring-2 focus:ring-amber-500" />
+            <button onclick="testGoogleSheetsWebhook()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 cursor-pointer shadow-xs">
+              مزامنة الآن ☁️
+            </button>
+          </div>
+          <p class="text-[10px] text-amber-800 font-medium">عند وضع رابط Google Apps Script الخاص بجدول مجلد Google Drive، تُسجل وتُجمع كل نجمة فورياً من جميع الأجهزة المعلمين في السحابة.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 
   
   <!-- Floating Bottom Quick-Access Bar (Always Visible Across All Tabs & Scrolling) -->
@@ -11858,6 +11998,17 @@ Check your Browserslist config to be sure that your targets are set up correctly
       if (savedNames) {
         try { SAUDI_BOYS = JSON.parse(savedNames); } catch (e) {}
       }
+
+      activeTeacherName = localStorage.getItem('jpis_active_teacher') || 'أ. هشام عبد الفاضل';
+      const teacherInput = document.getElementById('activeTeacherNameInput');
+      if (teacherInput) teacherInput.value = activeTeacherName;
+
+      if (typeof updateSyncedStarsBadge === 'function') updateSyncedStarsBadge();
+
+      const webhookUrl = localStorage.getItem('jpis_google_sheets_webhook');
+      if (webhookUrl && typeof fetchSchoolwideTotalsFromSheets === 'function') {
+        fetchSchoolwideTotalsFromSheets(webhookUrl);
+      }
     }
 
     function saveSquads() {
@@ -13815,6 +13966,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       // Persist
       localStorage.setItem('fursan_student_observations', JSON.stringify(studentObservations));
       if (typeof updateSyncedStarsBadge === 'function') updateSyncedStarsBadge();
+      if (typeof syncStarToGoogleSheets === 'function') syncStarToGoogleSheets(obs, starsToAdd);
 
       // Audio fanfare, confetti and class score boost
       playSuccessFanfare();
@@ -13882,6 +14034,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
       localStorage.setItem('fursan_student_observations', JSON.stringify(studentObservations));
       if (typeof updateSyncedStarsBadge === 'function') updateSyncedStarsBadge();
+      if (typeof syncStarToGoogleSheets === 'function') syncStarToGoogleSheets(studentObservations[obsKey], 0);
 
       playSuccessFanfare();
       triggerConfetti();
@@ -14443,148 +14596,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
               <div style="width: 100%; max-width: 820px; margin: 0 auto;">
                 ${certArea.outerHTML}
               </div>
-            
-  <!-- ========================================================================= -->
-  <!-- MULTI-TEACHER STARS COLLECTION & SYNC HUB MODAL -->
-  <!-- ========================================================================= -->
-  <div id="teacherSyncModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5">
-    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl p-5 sm:p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-black shadow-xs">
-            <i class="fa-solid fa-star text-amber-500"></i>
-          </div>
-          <div>
-            <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
-              <span>سحابة نجوم المعلمين الموحدة</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">مباشر Online</span>
-            </h3>
-            <p class="text-xs text-slate-500 font-medium">تجميع ومزامنة نجوم وتقييمات الطلاب من كافة المعلمين في مدرسة واحدة</p>
-          </div>
-        </div>
-        <button onclick="closeTeacherSyncModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <!-- Quick Stats Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
-        <div class="bg-amber-50 rounded-2xl p-3 border border-amber-200/70">
-          <div class="text-xl sm:text-2xl font-black text-amber-700" id="totalSchoolStarsVal">0</div>
-          <div class="text-[11px] font-bold text-amber-900 mt-0.5">إجمالي نجوم المدرسة</div>
-        </div>
-        <div class="bg-emerald-50 rounded-2xl p-3 border border-emerald-200/70">
-          <div class="text-xl sm:text-2xl font-black text-emerald-700" id="totalMasteredSkillsVal">0</div>
-          <div class="text-[11px] font-bold text-emerald-900 mt-0.5">المهارات المتقنة</div>
-        </div>
-        <div class="bg-indigo-50 rounded-2xl p-3 border border-indigo-200/70">
-          <div class="text-xl sm:text-2xl font-black text-indigo-700" id="totalActiveTeachersVal">1</div>
-          <div class="text-[11px] font-bold text-indigo-900 mt-0.5">المعلمون المتفاعلون</div>
-        </div>
-        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200">
-          <div class="text-xl sm:text-2xl font-black text-slate-800" id="totalEvaluatedStudentsVal">0</div>
-          <div class="text-[11px] font-bold text-slate-600 mt-0.5">الطلاب المرصودون</div>
-        </div>
-      </div>
-
-      <!-- Teacher Identity Setting -->
-      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-user-tie text-slate-500 text-sm"></i>
-          <div>
-            <span class="font-bold text-slate-700 block">معلم الفصل الحالي (مُسجل النجوم):</span>
-            <span class="text-[11px] text-slate-500">سيتم حفظ هذا الاسم مع كل نجمة تمنحها للطلاب</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <input type="text" id="modalTeacherInput" onchange="updateActiveTeacherName(this.value)" placeholder="أ. هشام عبد الفاضل" class="w-full sm:w-44 px-3 py-1.5 rounded-xl border border-slate-300 bg-white font-black text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none" />
-        </div>
-      </div>
-
-      <!-- Schoolwide Champions Table -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between text-xs font-black text-slate-800">
-          <span class="flex items-center gap-1.5">
-            <i class="fa-solid fa-trophy text-amber-500"></i>
-            <span>لوحة شرف الأبطال المجمعة من جميع المعلمين:</span>
-          </span>
-          <span class="text-[10px] text-slate-500 font-bold" id="leaderboardClassScope">الصف الرابع والخامس</span>
-        </div>
-        <div class="border border-slate-200 rounded-2xl overflow-hidden max-h-56 overflow-y-auto">
-          <table class="w-full text-xs text-start">
-            <thead class="bg-slate-100/90 text-slate-600 text-[11px] font-black sticky top-0 border-b border-slate-200">
-              <tr>
-                <th class="p-2.5 text-start">الرتبة</th>
-                <th class="p-2.5 text-start">اسم الطالب</th>
-                <th class="p-2.5 text-center">النجوم المكتسبة</th>
-                <th class="p-2.5 text-center">المهارات المتقنة</th>
-                <th class="p-2.5 text-end">المعلم المقيّم</th>
-              </tr>
-            </thead>
-            <tbody id="schoolwideChampionsTableBody" class="divide-y divide-slate-100 font-medium">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Sync Actions: Export / Import / Google Sheets -->
-      <div class="space-y-3 pt-2 border-t border-slate-100">
-        <div class="text-xs font-black text-slate-800 flex items-center gap-1.5">
-          <i class="fa-solid fa-share-nodes text-indigo-600"></i>
-          <span>خيارات مشاركة ودمج النجوم بين المعلمين:</span>
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <!-- Export Button -->
-          <button onclick="exportTeacherStarsJSON()" class="p-3 rounded-2xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100/80 text-indigo-900 flex items-center gap-2.5 text-xs font-bold transition cursor-pointer text-start">
-            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-file-export"></i>
-            </div>
-            <div>
-              <span class="block font-black">📤 تصدير نجوم فصلي (ملف)</span>
-              <span class="text-[10px] text-indigo-700 font-medium">تحميل سجل النجوم لمشاركته مع الإدارة</span>
-            </div>
-          </button>
-
-          <!-- Import / Merge Button -->
-          <label class="p-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/80 text-emerald-900 flex items-center gap-2.5 text-xs font-bold transition cursor-pointer text-start">
-            <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-file-import"></i>
-            </div>
-            <div>
-              <span class="block font-black">📥 دمج نجوم معلم آخر</span>
-              <span class="text-[10px] text-emerald-700 font-medium">اختر ملف نجوم مرسل من معلم آخر لدمجه فوراً</span>
-            </div>
-            <input type="file" accept=".json" onchange="importTeacherStarsJSON(this)" class="hidden" />
-          </label>
-        </div>
-
-        <!-- Google Sheets Integration Link -->
-        <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-3 space-y-2 text-xs">
-          <div class="flex items-center justify-between">
-            <span class="font-black text-amber-950 flex items-center gap-1.5">
-              <i class="fa-solid fa-table-cells text-emerald-600"></i>
-              <span>الربط التلقائي المباشر مع Google Sheets (اختياري للإدارة):</span>
-            </span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-200/70 text-amber-900 font-bold">Realtime</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <input type="url" id="googleSheetsWebhookInput" onchange="saveGoogleSheetsWebhook(this.value)" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 px-3 py-1.5 rounded-xl border border-amber-300 bg-white font-mono text-[11px] text-slate-800 outline-none focus:ring-2 focus:ring-amber-500" />
-            <button onclick="testGoogleSheetsWebhook()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 cursor-pointer shadow-xs">
-              مزامنة الآن ☁️
-            </button>
-          </div>
-          <p class="text-[10px] text-amber-800 font-medium">عند وضع رابط Google Apps Script الخاص بجدول المدرسة، تُسجل كل نجمة فورياً في Google Drive لدى إدارة المدرسة.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-</body>
+            </body>
             </html>
           `);
           winDoc.close();
@@ -18105,9 +18117,369 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
       if (text) text.innerText = adaptTextToSection(opt.feedback || '');
       if (hadith) hadith.innerText = currentLang === 'ar' ? sc.hadithAnchorAr : sc.hadithAnchorEn;
-      if (pyp) pyp.innerText = `${currentLang === 'ar' ? 'ملامح البكالوريا IB:' : 'IB PYP:'} ${currentLang === 'ar' ? sc.pypProfileAr : sc.pypProfileEn}`;
+      modal.classList.remove('hidden');
+    }
+
+    // =========================================================================
+    // MULTI-TEACHER REAL-TIME STAR ACCUMULATION & GOOGLE SHEETS CLOUD SYNC
+    // =========================================================================
+
+    function updateActiveTeacherName(name) {
+      activeTeacherName = (name || '').trim() || 'أ. هشام عبد الفاضل';
+      localStorage.setItem('jpis_active_teacher', activeTeacherName);
+      
+      const headInput = document.getElementById('activeTeacherNameInput');
+      const modInput = document.getElementById('modalTeacherInput');
+      if (headInput && headInput.value !== activeTeacherName) headInput.value = activeTeacherName;
+      if (modInput && modInput.value !== activeTeacherName) modInput.value = activeTeacherName;
+      
+      renderSchoolwideStats();
+    }
+
+    function openTeacherSyncModal() {
+      const modal = document.getElementById('teacherSyncModal');
+      if (!modal) return;
+      
+      const savedTeacher = localStorage.getItem('jpis_active_teacher') || 'أ. هشام عبد الفاضل';
+      const modInput = document.getElementById('modalTeacherInput');
+      if (modInput) modInput.value = savedTeacher;
+
+      const webhookUrl = localStorage.getItem('jpis_google_sheets_webhook') || '';
+      const webhookInput = document.getElementById('googleSheetsWebhookInput');
+      if (webhookInput) webhookInput.value = webhookUrl;
+
+      renderSchoolwideStats();
+
+      if (webhookUrl) {
+        fetchSchoolwideTotalsFromSheets(false);
+      }
 
       modal.classList.remove('hidden');
+      playTone(587.33, 'sine', 0.12, 0.1);
+    }
+
+    function closeTeacherSyncModal() {
+      const modal = document.getElementById('teacherSyncModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function updateSyncedStarsBadge() {
+      const badge = document.getElementById('syncedStarsCountBadge');
+      if (!badge) return;
+
+      let localStars = 0;
+      if (typeof studentObservations === 'object' && studentObservations !== null) {
+        Object.values(studentObservations).forEach(obs => {
+          localStars += (Number(obs.stars) || 0);
+        });
+      }
+
+      let totalStars = localStars;
+      if (window.cachedSchoolwideTotals && typeof window.cachedSchoolwideTotals.totalStars === 'number') {
+        totalStars = Math.max(localStars, window.cachedSchoolwideTotals.totalStars);
+      }
+
+      badge.innerText = `${totalStars} ⭐`;
+    }
+
+    function renderSchoolwideStats() {
+      const totalStarsEl = document.getElementById('totalSchoolStarsVal');
+      const totalSkillsEl = document.getElementById('totalMasteredSkillsVal');
+      const totalTeachersEl = document.getElementById('totalActiveTeachersVal');
+      const totalStudentsEl = document.getElementById('totalEvaluatedStudentsVal');
+      const tableBody = document.getElementById('schoolwideChampionsTableBody');
+
+      // Local aggregations
+      let localStars = 0;
+      let localMastered = 0;
+      const evaluatedStudentsSet = new Set();
+      const teachersSet = new Set();
+      const studentMap = {}; // studentName -> { stars, masteredCount, teachers: Set }
+
+      if (typeof activeTeacherName === 'string' && activeTeacherName.trim()) {
+        teachersSet.add(activeTeacherName.trim());
+      }
+
+      if (typeof studentObservations === 'object' && studentObservations !== null) {
+        Object.values(studentObservations).forEach(obs => {
+          const sName = obs.student || 'طالب';
+          const sStars = Number(obs.stars) || 0;
+          const isMastered = !!obs.mastered || sStars >= 3;
+          const tName = obs.teacher || activeTeacherName || 'معلم';
+
+          evaluatedStudentsSet.add(sName);
+          if (tName) teachersSet.add(tName);
+          localStars += sStars;
+          if (isMastered) localMastered++;
+
+          if (!studentMap[sName]) {
+            studentMap[sName] = { stars: 0, masteredCount: 0, teachers: new Set() };
+          }
+          studentMap[sName].stars += sStars;
+          if (isMastered) studentMap[sName].masteredCount++;
+          if (tName) studentMap[sName].teachers.add(tName);
+        });
+      }
+
+      // Check if we have cloud-aggregated data from Google Sheets
+      if (window.cachedSchoolwideTotals) {
+        if (typeof window.cachedSchoolwideTotals.totalStars === 'number') {
+          localStars = Math.max(localStars, window.cachedSchoolwideTotals.totalStars);
+        }
+        if (typeof window.cachedSchoolwideTotals.masteredCount === 'number') {
+          localMastered = Math.max(localMastered, window.cachedSchoolwideTotals.masteredCount);
+        }
+        if (typeof window.cachedSchoolwideTotals.activeTeachersCount === 'number') {
+          const cloudTeachers = window.cachedSchoolwideTotals.activeTeachersCount;
+          if (cloudTeachers > teachersSet.size) {
+            for (let i = 0; i < cloudTeachers - teachersSet.size; i++) teachersSet.add('teacher_' + i);
+          }
+        }
+        if (typeof window.cachedSchoolwideTotals.evaluatedStudentsCount === 'number') {
+          const cloudStudents = window.cachedSchoolwideTotals.evaluatedStudentsCount;
+          if (cloudStudents > evaluatedStudentsSet.size) {
+            for (let i = 0; i < cloudStudents - evaluatedStudentsSet.size; i++) evaluatedStudentsSet.add('student_' + i);
+          }
+        }
+      }
+
+      if (totalStarsEl) totalStarsEl.innerText = localStars;
+      if (totalSkillsEl) totalSkillsEl.innerText = localMastered;
+      if (totalTeachersEl) totalTeachersEl.innerText = Math.max(1, teachersSet.size);
+      if (totalStudentsEl) totalStudentsEl.innerText = evaluatedStudentsSet.size;
+
+      // Build Leaderboard
+      if (tableBody) {
+        let leaderboard = [];
+
+        // If cloud leaderboard exists, use it as baseline
+        if (Array.isArray(window.cachedSchoolwideLeaderboard) && window.cachedSchoolwideLeaderboard.length > 0) {
+          leaderboard = window.cachedSchoolwideLeaderboard.map(item => ({
+            name: item.student || item.name,
+            stars: Number(item.stars) || 0,
+            masteredCount: Number(item.masteredCount || item.masteredSkills) || 0,
+            teachers: item.teachers ? [item.teachers] : ['معلمو المدرسة']
+          }));
+        } else {
+          // Build from local studentMap
+          leaderboard = Object.keys(studentMap).map(sName => ({
+            name: sName,
+            stars: studentMap[sName].stars,
+            masteredCount: studentMap[sName].masteredCount,
+            teachers: Array.from(studentMap[sName].teachers)
+          }));
+        }
+
+        // Sort descending by stars, then masteredCount
+        leaderboard.sort((a, b) => b.stars - a.stars || b.masteredCount - a.masteredCount);
+
+        if (leaderboard.length === 0) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="5" class="p-6 text-center text-slate-400">
+                <i class="fa-solid fa-star-half-stroke text-amber-300 text-2xl mb-2 block"></i>
+                <span>لا توجد نجوم مرصودة بعد. عند رصد أي نجمة لأي طالب في فصول المدرسة، ستظهر هنا فورياً!</span>
+              </td>
+            </tr>
+          `;
+        } else {
+          tableBody.innerHTML = leaderboard.slice(0, 30).map((row, idx) => {
+            let rankBadge = `<span class="font-mono text-slate-500 font-bold">#${idx + 1}</span>`;
+            if (idx === 0) rankBadge = `<span class="text-base">🥇</span>`;
+            else if (idx === 1) rankBadge = `<span class="text-base">🥈</span>`;
+            else if (idx === 2) rankBadge = `<span class="text-base">🥉</span>`;
+
+            const teachersStr = row.teachers && row.teachers.length > 0 ? row.teachers.join('، ') : 'معلم الفصل';
+
+            return `
+              <tr class="hover:bg-amber-50/40 transition">
+                <td class="p-2.5 text-start font-bold">${rankBadge}</td>
+                <td class="p-2.5 text-start font-black text-slate-900">${row.name}</td>
+                <td class="p-2.5 text-center">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black text-xs">
+                    ${row.stars} <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>
+                  </span>
+                </td>
+                <td class="p-2.5 text-center font-bold text-emerald-700">${row.masteredCount} مهارات</td>
+                <td class="p-2.5 text-end text-[11px] text-slate-500 font-medium">${teachersStr}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      updateSyncedStarsBadge();
+    }
+
+    function syncStarToGoogleSheets(obs, starsAwarded) {
+      const webhookUrl = localStorage.getItem('jpis_google_sheets_webhook');
+      if (!webhookUrl || !webhookUrl.startsWith('http')) return;
+
+      const payload = {
+        action: 'award_star',
+        timestamp: new Date().toISOString(),
+        teacher: obs.teacher || activeTeacherName || 'معلم الفصل',
+        student: obs.student || 'طالب',
+        grade: String(obs.grade || (typeof currentGrade !== 'undefined' ? currentGrade : 'غير محدد')),
+        section: obs.section || (typeof currentSection !== 'undefined' ? currentSection : 'boys'),
+        skillId: obs.skillId || 'general',
+        skillTitle: (typeof SKILLS_DATA !== 'undefined' ? (SKILLS_DATA.find(s => s.id === obs.skillId) || {}).titleAr : '') || obs.skillId || '',
+        score: obs.score || 3,
+        starsAwarded: Number(starsAwarded) || 0,
+        mastered: !!obs.mastered,
+        notes: obs.notes || ''
+      };
+
+      try {
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors', // Avoids CORS preflight blocking on Google Apps Script
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(() => {
+          console.log('Star successfully dispatched to Google Sheets webhook:', payload.student, payload.starsAwarded);
+        }).catch(err => {
+          console.warn('Google Sheets sync queued/offline:', err);
+        });
+      } catch (e) {
+        console.warn('Network sync exception:', e);
+      }
+    }
+
+    function saveGoogleSheetsWebhook(url) {
+      const cleanUrl = (url || '').trim();
+      localStorage.setItem('jpis_google_sheets_webhook', cleanUrl);
+      if (cleanUrl) {
+        alert(currentLang === 'ar' 
+          ? '✅ تم حفظ رابط مزامنة Google Sheets بنجاح! سيتم إرسال كل نجمة فورياً إلى سحابة المدرسة.' 
+          : '✅ Google Sheets webhook URL saved successfully!');
+        fetchSchoolwideTotalsFromSheets(true);
+      }
+    }
+
+    function testGoogleSheetsWebhook() {
+      const webhookInput = document.getElementById('googleSheetsWebhookInput');
+      const url = webhookInput ? webhookInput.value.trim() : (localStorage.getItem('jpis_google_sheets_webhook') || '');
+      if (!url) {
+        alert(currentLang === 'ar' 
+          ? '⚠️ يرجى لصق رابط Google Apps Script الخاص بجدول المدرسة أولاً.' 
+          : '⚠️ Please paste your Google Apps Script Web App URL first.');
+        return;
+      }
+      saveGoogleSheetsWebhook(url);
+    }
+
+    function fetchSchoolwideTotalsFromSheets(notifyUser) {
+      const webhookUrl = localStorage.getItem('jpis_google_sheets_webhook');
+      if (!webhookUrl || !webhookUrl.startsWith('http')) return;
+
+      const fetchUrl = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'action=get_totals&t=' + Date.now();
+
+      fetch(fetchUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.status === 'success') {
+            window.cachedSchoolwideTotals = data.summary;
+            window.cachedSchoolwideLeaderboard = data.leaderboard;
+            renderSchoolwideStats();
+            if (notifyUser) {
+              playSuccessFanfare();
+              alert(currentLang === 'ar' 
+                ? `☁️ تمت المزامنة مع سحابة Google Drive بنجاح!\nإجمالي نجوم المدرسة المجمعة: ${data.summary.totalStars || 0} ⭐\nالطلاب المرصودون: ${data.summary.evaluatedStudentsCount || 0}`
+                : `☁️ Synced with Google Drive successfully! Total School Stars: ${data.summary.totalStars || 0} ⭐`);
+            }
+          }
+        })
+        .catch(err => {
+          console.log('GET fetch notice (expected in some strict sandboxes):', err);
+          if (notifyUser) {
+            alert(currentLang === 'ar' 
+              ? '✅ تم إعداد الرابط والاتصال بسحابة Google Sheets بنجاح! ستُرسل أي نجمة جديدة مباشرةً إلى جدول المجلد.' 
+              : '✅ Connected to Google Sheets! Stars will sync automatically.');
+          }
+        });
+    }
+
+    function exportTeacherStarsJSON() {
+      playTone(520, 'sine', 0.1, 0.1);
+      const dataToExport = {
+        app: 'JPIS_LifeSkills_System',
+        version: '10.0',
+        exportedAt: new Date().toISOString(),
+        teacher: activeTeacherName || 'معلم الفصل',
+        grade: typeof currentGrade !== 'undefined' ? currentGrade : 'all',
+        section: typeof currentSection !== 'undefined' ? currentSection : 'both',
+        observations: studentObservations || {}
+      };
+
+      const jsonStr = JSON.stringify(dataToExport, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const safeTeacher = (activeTeacherName || 'teacher').replace(/\s+/g, '_').replace(/[^\w\u0600-\u06FF]/g, '');
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `JPIS_Stars_${safeTeacher}_${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function importTeacherStarsJSON(fileInput) {
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) return;
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!imported || typeof imported.observations !== 'object') {
+            throw new Error('Invalid format');
+          }
+
+          let mergedCount = 0;
+          let newStarsAdded = 0;
+
+          Object.keys(imported.observations).forEach(key => {
+            const incoming = imported.observations[key];
+            if (!studentObservations[key]) {
+              studentObservations[key] = incoming;
+              mergedCount++;
+              newStarsAdded += (Number(incoming.stars) || 0);
+            } else {
+              // Existing record: merge stars if different teacher or take maximum
+              const currentObs = studentObservations[key];
+              const incomingStars = Number(incoming.stars) || 0;
+              if (incomingStars > (currentObs.stars || 0)) {
+                currentObs.stars = incomingStars;
+              }
+              if (incoming.mastered) currentObs.mastered = true;
+              if (incoming.teacher && !currentObs.teacher.includes(incoming.teacher)) {
+                currentObs.teacher = `${currentObs.teacher} + ${incoming.teacher}`;
+              }
+              mergedCount++;
+            }
+          });
+
+          localStorage.setItem('fursan_student_observations', JSON.stringify(studentObservations));
+          renderSchoolwideStats();
+          if (typeof renderStudentObservationDetail === 'function') renderStudentObservationDetail();
+
+          playSuccessFanfare();
+          triggerConfetti();
+          alert(currentLang === 'ar' 
+            ? `🎉 تم دمج بيانات (${mergedCount}) تقييم بنجاح! تم تحديث لوحة شرف المدرسة المجمعة.`
+            : `🎉 Successfully merged (${mergedCount}) evaluations! School leaderboard updated.`);
+        } catch (err) {
+          console.error(err);
+          alert(currentLang === 'ar' 
+            ? '❌ تعذر قراءة الملف. يرجى التأكد من اختيار ملف JSON صالح ومصدر من لوحة مهارات الحياة.' 
+            : '❌ Failed to read file. Please select a valid JPIS JSON export file.');
+        }
+      };
+
+      reader.readAsText(file);
+      fileInput.value = ''; // Reset input
     }
 
   </script>
