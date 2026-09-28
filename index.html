@@ -15630,13 +15630,26 @@ Check your Browserslist config to be sure that your targets are set up correctly
       let s = text;
       // Replace peace upon him ligature
       s = s.replace(/[\uFDFAﷺ]/g, ' صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ ');
-      // Replace Quranic / Hadith brackets & citations with spoken phrase
-      s = s.replace(/\[\s*النُّ?ور\s*:\s*[0-9٢٧]+\s*\]/gi, ' مِنْ سُورَةِ النُّورِ ');
-      s = s.replace(/\[\s*سورة\s+([^\]]+)\]/gi, ' مِنْ سُورَةِ $1 ');
-      s = s.replace(/\[\s*مُتَّفَقٌ\s+عَلَيْهِ\s*\]/gi, ' رَوَاهُ الْبُخَارِيُّ وَمُسْلِمٌ ');
-      s = s.replace(/\[\s*متفق\s+عليه\s*\]/gi, ' رَوَاهُ الْبُخَارِيُّ وَمُسْلِمٌ ');
-      s = s.replace(/\[\s*رَوَاهُ\s+([^\]]+)\]/gi, ' رَوَاهُ $1 ');
-      s = s.replace(/\[\s*رواه\s+([^\]]+)\]/gi, ' رَوَاهُ $1 ');
+
+      // Replace Quranic citations like [الْعَصْر: ١-٣] with natural pause and spoken surah name
+      s = s.replace(/\[\s*(?:سُورَةُ?\s+)?([^:\]]+)\s*:\s*([^\]]+)\]/gi, (m, surah) => {
+        let cleanSurah = surah.replace(/^سُورَةُ?\s+/i, '').trim();
+        return ` ، مِنْ سُورَةِ ${cleanSurah} ، `;
+      });
+
+      // Replace Hadith narrator citations
+      s = s.replace(/\[\s*مُتَّفَقٌ\s+عَلَيْهِ\s*\]/gi, ' ، رَوَاهُ الْبُخَارِيُّ وَمُسْلِمٌ ، ');
+      s = s.replace(/\[\s*متفق\s+عليه\s*\]/gi, ' ، رَوَاهُ الْبُخَارِيُّ وَمُسْلِمٌ ، ');
+      s = s.replace(/\[\s*رَوَاهُ\s+([^\]]+)\]/gi, ' ، رَوَاهُ $1 ، ');
+      s = s.replace(/\[\s*رواه\s+([^\]]+)\]/gi, ' ، رَوَاهُ $1 ، ');
+      s = s.replace(/\[\s*صحيح\s+مسلم\s*\]/gi, ' ، رَوَاهُ مُسْلِمٌ ، ');
+      s = s.replace(/\[\s*الترمذي\s*\]/gi, ' ، رَوَاهُ التِّرْمِذِيُّ ، ');
+      s = s.replace(/\[\s*البيهقي\s*\]/gi, ' ، رَوَاهُ الْبَيْهَقِيُّ ، ');
+
+      // Replace verse separator stars (*, ★, ⭐, ۞, ۝) with a deliberate breath pause
+      // Absolutely never pronounce 'najmah' or name the symbol
+      s = s.replace(/\s*[\*★☆⭐۞۝\u066D]+\s*/g, ' ... ، ... ');
+
       // Strip brackets and quotes that cause TTS stutter
       s = s.replace(/[[\]«»""“”‘’﴿﴾]/g, ' ');
       // Clean dagger alif
@@ -15699,6 +15712,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
       fallbackSpeakSnippet(text);
     }
 
+    let currentSpeechTimeout = null;
+
     function fallbackSpeakSnippet(rawText) {
       if (!window.speechSynthesis) {
         alert(currentLang === 'ar' ? 'خاصية القراءة الصوتية غير مدعومة في متصفحك.' : 'Speech synthesis not supported in this browser.');
@@ -15706,10 +15721,43 @@ Check your Browserslist config to be sure that your targets are set up correctly
         return;
       }
 
-      const isAr = (currentLang === 'ar');
-      const textToSpeak = isAr ? cleanArabicSpeechText(rawText) : rawText;
+      if (currentSpeechTimeout) {
+        clearTimeout(currentSpeechTimeout);
+        currentSpeechTimeout = null;
+      }
 
-      const u = new SpeechSynthesisUtterance(textToSpeak);
+      const isAr = (currentLang === 'ar');
+
+      // If text contains verse separator stars, split into individual verses and pause 1 second between them
+      if (rawText && /[\*★☆⭐۞۝\u066D]/.test(rawText)) {
+        const rawSegments = rawText.split(/[\*★☆⭐۞۝\u066D]+/);
+        const segments = rawSegments.map(s => isAr ? cleanArabicSpeechText(s) : s.trim()).filter(Boolean);
+        if (segments.length > 1) {
+          speakSequentialSegments(segments, 0, isAr);
+          return;
+        }
+      }
+
+      const textToSpeak = isAr ? cleanArabicSpeechText(rawText) : rawText;
+      speakSingleUtterance(textToSpeak, isAr, () => resetSnippetBtnUI());
+    }
+
+    function speakSequentialSegments(segments, index, isAr) {
+      if (index >= segments.length) {
+        resetSnippetBtnUI();
+        return;
+      }
+
+      speakSingleUtterance(segments[index], isAr, () => {
+        // Pauses 1 full second between verses before reciting the next one
+        currentSpeechTimeout = setTimeout(() => {
+          speakSequentialSegments(segments, index + 1, isAr);
+        }, 1000);
+      });
+    }
+
+    function speakSingleUtterance(text, isAr, onEndCallback) {
+      const u = new SpeechSynthesisUtterance(text);
       u.lang = isAr ? 'ar-SA' : 'en-US';
       u.rate = isAr ? 0.88 : 0.92; // Deliberate, clear, articulated pedagogical cadence
       u.pitch = 1.0;
@@ -15722,17 +15770,21 @@ Check your Browserslist config to be sure that your targets are set up correctly
       }
 
       u.onend = function() {
-        resetSnippetBtnUI();
+        if (onEndCallback) onEndCallback();
       };
 
       u.onerror = function() {
-        resetSnippetBtnUI();
+        if (onEndCallback) onEndCallback();
       };
 
       window.speechSynthesis.speak(u);
     }
 
     function resetSnippetBtnUI() {
+      if (currentSpeechTimeout) {
+        clearTimeout(currentSpeechTimeout);
+        currentSpeechTimeout = null;
+      }
       if (activeSnippetBtn) {
         activeSnippetBtn.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-50', 'text-emerald-700');
         const icon = activeSnippetBtn.querySelector('i');
@@ -15745,6 +15797,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
     function stopSkillSpeech() {
       resetSnippetBtnUI();
+      if (currentSpeechTimeout) {
+        clearTimeout(currentSpeechTimeout);
+        currentSpeechTimeout = null;
+      }
       if (currentAudioElement) {
         currentAudioElement.pause();
         currentAudioElement.currentTime = 0;
