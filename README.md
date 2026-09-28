@@ -4,9 +4,11 @@ Classroom platform for Jeddah Private International Schools.
 
 ## Teacher link (share this)
 
-**https://mrhishamfadil.github.io/jpis-life-skills/**
+**https://mrhishamfadil.github.io/teacher-ai-workspace/fursan/**
 
-Open in Chrome or Safari on a laptop or phone. No login. Works offline after the first load if the teacher keeps the tab.
+Open in Chrome or Safari on a laptop, tablet, or phone. No login.
+
+Source copy of this build also lives in this repository (`index.html`).
 
 ## How to use in class
 
