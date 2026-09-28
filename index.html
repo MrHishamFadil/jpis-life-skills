@@ -18379,7 +18379,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         .then(res => res.json())
         .then(data => {
           if (data && data.status === 'success') {
-            window.cachedSchoolwideTotals = data.summary;
+            const summary = data.summary || {
+              totalStars: data.totalSchoolwideStars || 0,
+              evaluatedStudentsCount: data.evaluatedStudentsCount || 0,
+              activeTeachersCount: data.activeTeachersCount || 1,
+              masteredCount: 0
+            };
+            window.cachedSchoolwideTotals = summary;
             window.cachedSchoolwideLeaderboard = data.leaderboard;
             renderSchoolwideStats();
             if (notifyUser) {
