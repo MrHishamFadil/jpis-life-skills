@@ -1,19 +1,15 @@
 name: Deploy site
-
 on:
   push:
     branches: [master]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
+  group: pages
+  cancel-in-progress: true
 jobs:
   deploy:
     environment:
@@ -21,22 +17,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Verify Build Artifacts
-        run: |
-          test -f index.html || (echo "::error::index.html is missing!" && exit 1)
-          test -f .nojekyll || touch .nojekyll
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: .
-
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
