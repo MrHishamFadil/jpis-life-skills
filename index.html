@@ -270,6 +270,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Cairo", "Tajawal", sans-serif;
       transition: background-color 0.3s ease;
     }
+
+    [dir="rtl"], [dir="rtl"] * {
+      letter-spacing: normal !important;
+    }
+    [dir="rtl"] .quran-verse-text {
+      line-height: 2.1 !important;
+    }
     
     [dir="ltr"] {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Plus Jakarta Sans", sans-serif;
@@ -680,10 +687,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           <span class="text-[11px] text-amber-700 hidden lg:inline" id="activeTeacherLabel">المعلم:</span>
           <input type="text" id="activeTeacherNameInput" onchange="updateActiveTeacherName(this.value)" placeholder="أ. هشام عبد الفاضل" class="bg-transparent text-xs font-black text-amber-950 border-none outline-none w-24 sm:w-32 focus:bg-white focus:ring-1 focus:ring-amber-400 rounded px-1" />
         </div>
-        <button onclick="openTeacherSyncModal()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black text-xs flex items-center gap-1.5 shadow-sm hover:shadow transition cursor-pointer" title="تجميع ومزامنة نجوم المعلمين الموحدة">
-          <i class="fa-solid fa-cloud-arrow-up text-amber-100"></i>
+        <button onclick="openTeacherSyncModal()" id="btnOpenTeacherSync" class="px-2.5 sm:px-3 py-1.5 min-h-[44px] rounded-xl bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-950 font-black text-xs flex items-center gap-1.5 shadow-2xs hover:shadow transition cursor-pointer" title="تجميع ومزامنة نجوم المعلمين الموحدة" aria-haspopup="dialog" aria-label="مركز تجميع نجوم المعلمين، الرصيد المتزامن">
+          <i class="fa-solid fa-cloud-arrow-up text-amber-800"></i>
           <span class="hidden md:inline">نجوم المعلمين</span>
-          <span id="syncedStarsCountBadge" class="px-1.5 py-0.5 rounded-full bg-amber-800/80 text-[10px] font-black">0 ⭐</span>
+          <span id="syncedStarsCountBadge" class="px-2 py-0.5 rounded-full bg-amber-900 text-amber-50 text-[11px] font-black">0 ⭐</span>
         </button>
 
         <!-- Language Toggle -->
@@ -1721,7 +1728,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
   <!-- ========================================================================= -->
   <!-- MULTI-TEACHER STARS COLLECTION & SYNC HUB MODAL -->
   <!-- ========================================================================= -->
-  <div id="teacherSyncModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5">
+  <div id="teacherSyncModal" role="dialog" aria-modal="true" aria-labelledby="teacherSyncModalTitle" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5">
     <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl p-5 sm:p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
       
       <!-- Modal Header -->
@@ -1731,15 +1738,15 @@ Check your Browserslist config to be sure that your targets are set up correctly
             <i class="fa-solid fa-star text-amber-500"></i>
           </div>
           <div>
-            <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+            <h3 id="teacherSyncModalTitle" class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
               <span>سحابة نجوم المعلمين الموحدة</span>
               <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">مباشر Online</span>
             </h3>
             <p class="text-xs text-slate-500 font-medium">تجميع ومزامنة نجوم وتقييمات الطلاب من كافة المعلمين في مدرسة واحدة</p>
           </div>
         </div>
-        <button onclick="closeTeacherSyncModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer">
-          <i class="fa-solid fa-xmark"></i>
+        <button onclick="closeTeacherSyncModal()" aria-label="إغلاق نافذة سحابة نجوم المعلمين" class="w-11 h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer">
+          <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
 
@@ -11840,9 +11847,50 @@ Check your Browserslist config to be sure that your targets are set up correctly
 };
 
     // --- 2. GLOBAL STATE ---
+    let activeTeacherName = 'أ. هشام عبد الفاضل';
+    let isJuniorMode = false;
     let currentLang = 'ar'; // 'ar' or 'en'
     let currentGrade = 5; // 5 or 4
     let soundEnabled = true;
+
+    // --- SECURITY SANITIZERS (OWASP ASVS / Anti-XSS & Formula Injection) ---
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function sanitizeCSVField(val) {
+      if (val === null || val === undefined) return '""';
+      let str = String(val);
+      if (/^[=+\-@\t\r]/.test(str)) {
+        str = "'" + str;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+
+    function isValidGoogleWebhookUrl(url) {
+      if (!url || typeof url !== 'string') return false;
+      try {
+        const parsed = new URL(url.trim());
+        if (parsed.protocol !== 'https:') return false;
+        const validHosts = ['script.google.com', 'script.googleusercontent.com'];
+        return validHosts.includes(parsed.hostname) && parsed.pathname.includes('/macros/s/');
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function announceToScreenReader(message) {
+      const region = document.getElementById('a11yLiveRegion');
+      if (!region) return;
+      region.textContent = '';
+      setTimeout(() => { region.textContent = message; }, 50);
+    }
     let classScore = 0;
     let activeScenarioIndex = 0;
     let timerSeconds = 60;
@@ -11881,13 +11929,21 @@ Check your Browserslist config to be sure that your targets are set up correctly
     // --- 3. WEB AUDIO API SYNTHESIZER (100% Offline Reliable) ---
     let audioCtx = null;
     function getAudioContext() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      try {
+        if (!window.AudioContext && !window.webkitAudioContext) return null;
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(err => {
+            console.warn('AudioContext resume blocked by autoplay policy:', err);
+          });
+        }
+        return audioCtx;
+      } catch (e) {
+        console.warn('Web Audio init error:', e);
+        return null;
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      return audioCtx;
     }
 
     function playTone(freq, type = 'sine', duration = 0.3, gainLevel = 0.2) {
@@ -12007,7 +12063,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
       const webhookUrl = localStorage.getItem('jpis_google_sheets_webhook');
       if (webhookUrl && typeof fetchSchoolwideTotalsFromSheets === 'function') {
-        fetchSchoolwideTotalsFromSheets(webhookUrl);
+        fetchSchoolwideTotalsFromSheets(false); // Silent background fetch without disruptive popup alerts
       }
     }
 
@@ -12711,12 +12767,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
     function toggleSound() {
       soundEnabled = !soundEnabled;
       const icon = document.getElementById('soundIcon');
-      if (soundEnabled) {
-        icon.className = 'fa-solid fa-volume-high text-emerald-600';
-        playTone(440, 'sine', 0.1, 0.1);
-      } else {
-        icon.className = 'fa-solid fa-volume-xmark text-slate-400';
+      if (icon) {
+        icon.className = soundEnabled 
+          ? 'fa-solid fa-volume-high text-emerald-600' 
+          : 'fa-solid fa-volume-xmark text-slate-400';
       }
+      if (soundEnabled) playTone(440, 'sine', 0.1, 0.1);
     }
 
     function toggleFullScreen() {
@@ -13385,7 +13441,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
         .replace(/فرساننا/g, 'فارساتنا');
     }
 
-    let isJuniorMode = false;
     function setSectionMode(sec) {
       currentSection = sec;
       playTone(sec === 'girls' ? 560 : 480, 'triangle', 0.1, 0.1);
@@ -13518,12 +13573,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
           playTickSound();
           const temp = names[Math.floor(Math.random() * names.length)] || 'سعود';
           const disp = document.getElementById('pickedStudentDisplay');
-          if (disp) disp.innerHTML = `<span>${temp}</span> <i class="fa-solid fa-spinner animate-spin text-purple-600 text-lg"></i>`;
+          if (disp) disp.innerHTML = `<span><bdi>${escapeHtml(temp)}</bdi></span> <i class="fa-solid fa-spinner animate-spin text-purple-600 text-lg"></i>`;
           count++;
           if (count > 12) {
             clearInterval(interval);
             const winner = names[Math.floor(Math.random() * names.length)] || (currentSection === 'girls' ? 'نورة' : 'فيصل');
-            if (disp) disp.innerHTML = `<span>${winner}</span> <i class="fa-solid fa-crown text-amber-500 text-xl animate-bounce"></i>`;
+            if (disp) disp.innerHTML = `<span><bdi>${escapeHtml(winner)}</bdi></span> <i class="fa-solid fa-crown text-amber-500 text-xl animate-bounce"></i>`;
             playSuccessFanfare();
             triggerConfetti();
           }
@@ -13911,7 +13966,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           <label class="font-bold text-slate-700 text-xs block">
             ${currentLang === 'ar' ? 'ملاحظات المعلم السلوكية والتطويرية:' : 'Teacher Behavioral Notes & Next Steps:'}
           </label>
-          <textarea id="obsNotesText" rows="2" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="${currentLang === 'ar' ? 'أظهر الطالب التزاماً عالياً في تطبيق المهارة...' : 'Student showed great commitment in...'}">${currentObs.notes || ''}</textarea>
+          <textarea id="obsNotesText" rows="2" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="${currentLang === 'ar' ? 'أظهر الطالب التزاماً عالياً في تطبيق المهارة...' : 'Student showed great commitment in...'}">${escapeHtml(currentObs.notes || '')}</textarea>
         </div>
       `;
     }
@@ -13997,6 +14052,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       }
       playTone(320, 'sine', 0.1, 0.1);
       renderStudentObservationDetail();
+      if (typeof updateSyncedStarsBadge === 'function') updateSyncedStarsBadge();
     }
 
     function saveCurrentObservation() {
@@ -14061,11 +14117,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
           const skill = SKILLS_DATA.find(s => s.id === obs.skillId) || {};
           const title = (currentLang === 'ar' ? skill.titleAr : skill.titleEn) || obs.skillId;
           const tierName = obs.tier === 'tier3' ? 'Independent Mastery (3)' : (obs.tier === 'tier2' ? 'Practising (2)' : 'Learning (1)');
-          const safeNotes = (obs.notes || '').replace(/"/g, '""');
           const secLabel = obs.section === 'girls' ? 'Girls Section' : 'Boys Section';
           const masteredStatus = obs.mastered ? 'Mastered' : 'In Training';
-          csv += `"${obs.student}","${secLabel}","Grade ${obs.grade || currentGrade}","${obs.skillId}","${title}","${obs.stars || 0}","${masteredStatus}","${tierName}","${(obs.checked || []).length}/6","${safeNotes}","${obs.timestamp || ''}"
-`;
+          csv += `${sanitizeCSVField(obs.student)},${sanitizeCSVField(secLabel)},${sanitizeCSVField('Grade ' + (obs.grade || currentGrade))},${sanitizeCSVField(obs.skillId)},${sanitizeCSVField(title)},${sanitizeCSVField(obs.stars || 0)},${sanitizeCSVField(masteredStatus)},${sanitizeCSVField(tierName)},${sanitizeCSVField((obs.checked || []).length + '/6')},${sanitizeCSVField(obs.notes || '')},${sanitizeCSVField(obs.timestamp || '')}\n`;
         }
       });
 
@@ -14293,7 +14347,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
                     <td class="p-3 text-center">${rankBadge}</td>
                     <td class="p-3 font-black text-slate-900 flex items-center gap-2">
                       <span class="text-base">${currentSection === 'girls' ? '<i class="fa-solid fa-child-dress text-slate-500"></i>' : '<i class="fa-solid fa-child text-slate-500"></i>'}</span>
-                      <span>${s.name}</span>
+                      <span><bdi>${escapeHtml(s.name)}</bdi></span>
                     </td>
                     <td class="p-3 text-center font-black text-amber-600">
                       ⭐ ${s.totalStars}
@@ -14307,7 +14361,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
                       </span>
                     </td>
                     <td class="p-3 text-center">
-                      <button onclick="openStudentCertificate('${s.name}')" class="px-2.5 py-1 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 text-xs font-black transition flex items-center gap-1 mx-auto cursor-pointer">
+                      <button data-student="${escapeHtml(s.name)}" onclick="openStudentCertificate(this.getAttribute('data-student'))" class="px-2.5 py-1 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 text-xs font-black transition flex items-center gap-1 mx-auto cursor-pointer">
                         <i class="fa-solid fa-award text-amber-500"></i>
                         <span>${currentLang === 'ar' ? 'شهادة' : 'Cert'}</span>
                       </button>
@@ -14635,8 +14689,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
       leaderboard.forEach((s, idx) => {
         const secLabel = currentSection === 'girls' ? 'Girls Section' : 'Boys Section';
-        csv += `"${idx + 1}","${s.name}","${secLabel}","Grade ${currentGrade}","${s.totalStars}","${s.masteredCount}","${s.recordsCount}","${new Date().toISOString().slice(0, 10)}"
-`;
+        csv += `${sanitizeCSVField(idx + 1)},${sanitizeCSVField(s.name)},${sanitizeCSVField(secLabel)},${sanitizeCSVField('Grade ' + currentGrade)},${sanitizeCSVField(s.totalStars)},${sanitizeCSVField(s.masteredCount)},${sanitizeCSVField(s.recordsCount)},${sanitizeCSVField(new Date().toISOString().slice(0, 10))}\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -15704,19 +15757,22 @@ Check your Browserslist config to be sure that your targets are set up correctly
         const studioAudio = new Audio(audioPath);
         currentAudioElement = studioAudio;
 
-        studioAudio.play().then(() => {
-          studioAudio.onended = () => {
-            currentAudioElement = null;
-            resetSnippetBtnUI();
-          };
-          studioAudio.onerror = () => {
-            currentAudioElement = null;
-            fallbackSpeakSnippet(text);
-          };
-        }).catch(() => {
+        studioAudio.onended = () => {
+          currentAudioElement = null;
+          resetSnippetBtnUI();
+        };
+        studioAudio.onerror = () => {
           currentAudioElement = null;
           fallbackSpeakSnippet(text);
-        });
+        };
+        const playPromise = studioAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn('Audio playback prevented or media missing, falling back to TTS:', err);
+            currentAudioElement = null;
+            fallbackSpeakSnippet(text);
+          });
+        }
         return;
       }
 
@@ -15931,16 +15987,28 @@ Check your Browserslist config to be sure that your targets are set up correctly
       });
     }
 
-    function getBestMaleVoice(isAr, preferredVoiceName) {
+    function getBestArabicVoice(isAr, preferredVoiceName) {
       if (!window.speechSynthesis) return null;
       const voices = window.speechSynthesis.getVoices();
       if (!voices || voices.length === 0) return null;
 
       if (isAr) {
+        const preferFemale = (typeof currentSection !== 'undefined' && currentSection === 'girls');
+        if (preferFemale) {
+          const arFemale = voices.find(v => v.lang.startsWith('ar') && 
+            (v.name.includes('Zariyah') || v.name.includes('Fatima') || v.name.includes('Salma') || v.name.toLowerCase().includes('female')));
+          if (arFemale) return arFemale;
+        }
         const arMale = voices.find(v => v.lang.startsWith('ar') && (v.name.includes('Hamed') || v.name.includes('Maged') || v.name.includes('Saudi') || v.name.toLowerCase().includes('male')));
         if (arMale) return arMale;
         return voices.find(v => v.lang.startsWith('ar')) || null;
       } else {
+        return getBestEnglishVoice(preferredVoiceName, voices);
+      }
+    }
+    const getBestMaleVoice = getBestArabicVoice;
+
+    function getBestEnglishVoice(preferredVoiceName, voices) {
         if (preferredVoiceName) {
           const match = voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes(preferredVoiceName.toLowerCase()));
           if (match) return match;
@@ -15951,11 +16019,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
           if (m) return m;
         }
         return voices.find(v => v.lang === 'en-US') || null;
-      }
     }
 
     function fallbackToSpeechSynthesis(skill, voiceInfo) {
-      if (!window.speechSynthesis) return;
+      if (!window.speechSynthesis) {
+        stopSkillSpeech();
+        return;
+      }
 
       const isAr = (voiceInfo.lang === 'ar');
       const title = isAr ? skill.titleAr : skill.titleEn;
@@ -16298,6 +16368,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
     // Keyboard Accessibility: Dismiss ANY active popup/modal on Escape key & Tab trapping
     window.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+        // Close teacher sync modal
+        if (typeof closeTeacherSyncModal === 'function') {
+          const syncM = document.getElementById('teacherSyncModal');
+          if (syncM && !syncM.classList.contains('hidden')) {
+            closeTeacherSyncModal();
+            return;
+          }
+        }
         // Close certificate modal
         if (typeof closeStudentCertificateModal === 'function') {
           const certModal = document.getElementById('studentCertificateModal');
@@ -16364,6 +16442,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       }
 
       const activeModal = [
+        document.getElementById('teacherSyncModal'),
         document.getElementById('studentCertificateModal'),
         document.getElementById('achieversReportModal'),
         document.getElementById('skillModal'),
@@ -17925,7 +18004,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
                                  (s.titleEn && s.titleEn.toLowerCase().includes(q)) ||
                                  (s.taglineAr && s.taglineAr.toLowerCase().includes(q)) ||
                                  (s.character && s.character.nameAr.toLowerCase().includes(q));
-        return matchQuery;
+        const matchGrouping = !activeFilterGrouping || activeFilterGrouping === 'all' || s.grouping === activeFilterGrouping;
+        const matchDuration = !activeFilterDuration || activeFilterDuration === 'all' || s.duration === activeFilterDuration;
+        return matchQuery && matchGrouping && matchDuration;
       });
       renderSkillsGrid(filtered);
     }
@@ -18136,9 +18217,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
       renderSchoolwideStats();
     }
 
+    let lastSyncHubTrigger = null;
     function openTeacherSyncModal() {
       const modal = document.getElementById('teacherSyncModal');
       if (!modal) return;
+      lastSyncHubTrigger = document.activeElement;
       
       const savedTeacher = localStorage.getItem('jpis_active_teacher') || 'أ. هشام عبد الفاضل';
       const modInput = document.getElementById('modalTeacherInput');
@@ -18161,6 +18244,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
     function closeTeacherSyncModal() {
       const modal = document.getElementById('teacherSyncModal');
       if (modal) modal.classList.add('hidden');
+      if (lastSyncHubTrigger && typeof lastSyncHubTrigger.focus === 'function') {
+        lastSyncHubTrigger.focus();
+        lastSyncHubTrigger = null;
+      }
     }
 
     function updateSyncedStarsBadge() {
@@ -18256,7 +18343,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         if (Array.isArray(window.cachedSchoolwideLeaderboard) && window.cachedSchoolwideLeaderboard.length > 0) {
           leaderboard = window.cachedSchoolwideLeaderboard.map(item => ({
             name: item.student || item.name,
-            stars: Number(item.stars) || 0,
+            stars: Number(item.totalStars !== undefined ? item.totalStars : (item.stars || 0)),
             masteredCount: Number(item.masteredCount || item.masteredSkills) || 0,
             teachers: item.teachers ? [item.teachers] : ['معلمو المدرسة']
           }));
@@ -18294,14 +18381,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
             return `
               <tr class="hover:bg-amber-50/40 transition">
                 <td class="p-2.5 text-start font-bold">${rankBadge}</td>
-                <td class="p-2.5 text-start font-black text-slate-900">${row.name}</td>
+                <td class="p-2.5 text-start font-black text-slate-900"><bdi>${escapeHtml(row.name)}</bdi></td>
                 <td class="p-2.5 text-center">
                   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black text-xs">
                     ${row.stars} <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>
                   </span>
                 </td>
                 <td class="p-2.5 text-center font-bold text-emerald-700">${row.masteredCount} مهارات</td>
-                <td class="p-2.5 text-end text-[11px] text-slate-500 font-medium">${teachersStr}</td>
+                <td class="p-2.5 text-end text-[11px] text-slate-500 font-medium">${escapeHtml(teachersStr)}</td>
               </tr>
             `;
           }).join('');
@@ -18311,9 +18398,30 @@ Check your Browserslist config to be sure that your targets are set up correctly
       updateSyncedStarsBadge();
     }
 
+    function queueOfflineStar(payload) {
+      try {
+        const queue = JSON.parse(localStorage.getItem('jpis_pending_sync_queue') || '[]');
+        queue.push(payload);
+        localStorage.setItem('jpis_pending_sync_queue', JSON.stringify(queue));
+      } catch (e) {}
+    }
+
+    function flushPendingSyncQueue() {
+      const webhookUrl = localStorage.getItem('jpis_google_sheets_webhook');
+      if (!isValidGoogleWebhookUrl(webhookUrl) || !navigator.onLine) return;
+      try {
+        const queue = JSON.parse(localStorage.getItem('jpis_pending_sync_queue') || '[]');
+        if (queue.length === 0) return;
+        const item = queue.shift();
+        localStorage.setItem('jpis_pending_sync_queue', JSON.stringify(queue));
+        syncStarToGoogleSheets(item, item.starsAwarded);
+      } catch (e) {}
+    }
+    window.addEventListener('online', flushPendingSyncQueue);
+
     function syncStarToGoogleSheets(obs, starsAwarded) {
       const webhookUrl = localStorage.getItem('jpis_google_sheets_webhook');
-      if (!webhookUrl || !webhookUrl.startsWith('http')) return;
+      if (!isValidGoogleWebhookUrl(webhookUrl)) return;
 
       const payload = {
         action: 'award_star',
@@ -18340,6 +18448,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           console.log('Star successfully dispatched to Google Sheets webhook:', payload.student, payload.starsAwarded);
         }).catch(err => {
           console.warn('Google Sheets sync queued/offline:', err);
+          queueOfflineStar(payload);
         });
       } catch (e) {
         console.warn('Network sync exception:', e);
@@ -18397,11 +18506,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
           }
         })
         .catch(err => {
-          console.log('GET fetch notice (expected in some strict sandboxes):', err);
+          console.warn('GET fetch error:', err);
           if (notifyUser) {
             alert(currentLang === 'ar' 
-              ? '✅ تم إعداد الرابط والاتصال بسحابة Google Sheets بنجاح! ستُرسل أي نجمة جديدة مباشرةً إلى جدول المجلد.' 
-              : '✅ Connected to Google Sheets! Stars will sync automatically.');
+              ? '❌ تعذر استرجاع الإجماليات من سحابة Google Sheets. يرجى التأكد من اتصال الإنترنت وصلاحية رابط تطبيق الويب (Web App).' 
+              : '❌ Unable to retrieve totals from Google Sheets. Please verify your internet connection and Web App URL.');
           }
         });
     }
@@ -18447,21 +18556,34 @@ Check your Browserslist config to be sure that your targets are set up correctly
           let newStarsAdded = 0;
 
           Object.keys(imported.observations).forEach(key => {
-            const incoming = imported.observations[key];
+            const raw = imported.observations[key];
+            if (!raw || typeof raw !== 'object') return;
+            const incoming = {
+              student: String(raw.student || '').slice(0, 100).trim(),
+              skillId: String(raw.skillId || '').replace(/[^\w-]/g, '').slice(0, 50),
+              stars: Math.max(0, Math.min(50, parseInt(raw.stars, 10) || 0)),
+              mastered: Boolean(raw.mastered),
+              tier: ['tier1', 'tier2', 'tier3'].includes(raw.tier) ? raw.tier : 'tier2',
+              notes: String(raw.notes || '').slice(0, 500),
+              grade: String(raw.grade || '4').slice(0, 10),
+              section: raw.section === 'girls' ? 'girls' : 'boys',
+              teacher: String(raw.teacher || 'معلم').slice(0, 100),
+              timestamp: new Date(raw.timestamp || Date.now()).toISOString()
+            };
             if (!studentObservations[key]) {
               studentObservations[key] = incoming;
               mergedCount++;
-              newStarsAdded += (Number(incoming.stars) || 0);
+              newStarsAdded += incoming.stars;
             } else {
-              // Existing record: merge stars if different teacher or take maximum
               const currentObs = studentObservations[key];
-              const incomingStars = Number(incoming.stars) || 0;
+              const incomingStars = incoming.stars;
               if (incomingStars > (currentObs.stars || 0)) {
                 currentObs.stars = incomingStars;
               }
               if (incoming.mastered) currentObs.mastered = true;
-              if (incoming.teacher && !currentObs.teacher.includes(incoming.teacher)) {
-                currentObs.teacher = `${currentObs.teacher} + ${incoming.teacher}`;
+              const curTeacher = currentObs.teacher || 'معلم';
+              if (incoming.teacher && !curTeacher.includes(incoming.teacher)) {
+                currentObs.teacher = `${curTeacher} + ${incoming.teacher}`;
               }
               mergedCount++;
             }
@@ -18489,6 +18611,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
     }
 
   </script>
-  <script src="star-sync.js"></script>
+
+  <!-- Accessible Live Region for Dynamic Announcements -->
+  <div id="a11yLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>
