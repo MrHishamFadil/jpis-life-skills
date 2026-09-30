@@ -685,7 +685,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         <div class="hidden sm:flex items-center gap-1.5 bg-amber-50 border border-amber-200/90 rounded-xl px-2.5 py-1 text-xs text-amber-900 font-bold shadow-2xs">
           <i class="fa-solid fa-chalkboard-user text-amber-600"></i>
           <span class="text-[11px] text-amber-700 hidden lg:inline" id="activeTeacherLabel">المعلم:</span>
-          <input type="text" id="activeTeacherNameInput" onchange="updateActiveTeacherName(this.value)" placeholder="أ. هشام عبد الفاضل" class="bg-transparent text-xs font-black text-amber-950 border-none outline-none w-24 sm:w-32 focus:bg-white focus:ring-1 focus:ring-amber-400 rounded px-1" />
+          <input type="text" id="activeTeacherNameInput" onchange="updateActiveTeacherName(this.value)" placeholder="أ. هشام عبد الفضيل" class="bg-transparent text-xs font-black text-amber-950 border-none outline-none w-24 sm:w-32 focus:bg-white focus:ring-1 focus:ring-amber-400 rounded px-1" />
         </div>
         <button onclick="openTeacherSyncModal()" id="btnOpenTeacherSync" class="px-2.5 sm:px-3 py-1.5 min-h-[44px] rounded-xl bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-950 font-black text-xs flex items-center gap-1.5 shadow-2xs hover:shadow transition cursor-pointer" title="تجميع ومزامنة نجوم المعلمين الموحدة" aria-haspopup="dialog" aria-label="مركز تجميع نجوم المعلمين، الرصيد المتزامن">
           <i class="fa-solid fa-cloud-arrow-up text-amber-800"></i>
@@ -1780,7 +1780,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           </div>
         </div>
         <div class="flex items-center gap-2 w-full sm:w-auto">
-          <input type="text" id="modalTeacherInput" onchange="updateActiveTeacherName(this.value)" placeholder="أ. هشام عبد الفاضل" class="w-full sm:w-44 px-3 py-1.5 rounded-xl border border-slate-300 bg-white font-black text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none" />
+          <input type="text" id="modalTeacherInput" onchange="updateActiveTeacherName(this.value)" placeholder="أ. هشام عبد الفضيل" class="w-full sm:w-44 px-3 py-1.5 rounded-xl border border-slate-300 bg-white font-black text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none" />
         </div>
       </div>
 
@@ -11847,7 +11847,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 };
 
     // --- 2. GLOBAL STATE ---
-    let activeTeacherName = 'أ. هشام عبد الفاضل';
+    let activeTeacherName = 'أ. هشام عبد الفضيل';
     let isJuniorMode = false;
     let currentLang = 'ar'; // 'ar' or 'en'
     let currentGrade = 5; // 5 or 4
@@ -12055,7 +12055,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         try { SAUDI_BOYS = JSON.parse(savedNames); } catch (e) {}
       }
 
-      activeTeacherName = localStorage.getItem('jpis_active_teacher') || 'أ. هشام عبد الفاضل';
+      activeTeacherName = localStorage.getItem('jpis_active_teacher') || 'أ. هشام عبد الفضيل';
       const teacherInput = document.getElementById('activeTeacherNameInput');
       if (teacherInput) teacherInput.value = activeTeacherName;
 
@@ -14016,7 +14016,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
       const notesEl = document.getElementById('obsNotesText');
       if (notesEl) obs.notes = notesEl.value.trim();
-      obs.teacher = typeof activeTeacherName !== 'undefined' ? activeTeacherName : 'أ. هشام عبد الفاضل';
+      obs.teacher = typeof activeTeacherName !== 'undefined' ? activeTeacherName : 'أ. هشام عبد الفضيل';
 
       // Persist
       localStorage.setItem('fursan_student_observations', JSON.stringify(studentObservations));
@@ -14084,7 +14084,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         mastered: !!existing.mastered,
         grade: currentGrade,
         section: currentSection,
-        teacher: typeof activeTeacherName !== 'undefined' ? activeTeacherName : 'أ. هشام عبد الفاضل',
+        teacher: typeof activeTeacherName !== 'undefined' ? activeTeacherName : 'أ. هشام عبد الفضيل',
         timestamp: new Date().toISOString()
       };
 
@@ -18206,7 +18206,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
     // =========================================================================
 
     function updateActiveTeacherName(name) {
-      activeTeacherName = (name || '').trim() || 'أ. هشام عبد الفاضل';
+      activeTeacherName = (name || '').trim() || 'أ. هشام عبد الفضيل';
       localStorage.setItem('jpis_active_teacher', activeTeacherName);
       
       const headInput = document.getElementById('activeTeacherNameInput');
@@ -18223,7 +18223,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       if (!modal) return;
       lastSyncHubTrigger = document.activeElement;
       
-      const savedTeacher = localStorage.getItem('jpis_active_teacher') || 'أ. هشام عبد الفاضل';
+      const savedTeacher = localStorage.getItem('jpis_active_teacher') || 'أ. هشام عبد الفضيل';
       const modInput = document.getElementById('modalTeacherInput');
       if (modInput) modInput.value = savedTeacher;
 
