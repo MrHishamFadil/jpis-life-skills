@@ -616,9 +616,125 @@ Check your Browserslist config to be sure that your targets are set up correctly
   .overflow-hidden { overflow: hidden; }
   .overflow-y-auto { overflow-y: auto; }
 
+  /* ========================================================
+     JPIS AL-FURSAN DESIGN SYSTEM TOKENS (DESIGN.md v2.0)
+     Modern Educational Claymorphism & High Contrast Palette
+     ======================================================== */
+  :root {
+    --brand-primary: #4F46E5;
+    --brand-primary-hover: #4338CA;
+    --brand-primary-light: #EEF2FF;
+    --color-star-gold: #D97706;
+    --color-star-glow: #FEF3C7;
+    --color-mastery-emerald: #059669;
+    --color-alert-rose: #E11D48;
+    --surface-bg: #F8FAFC;
+    --surface-card: #FFFFFF;
+    --surface-card-subtle: #F1F5F9;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --border-subtle: #E2E8F0;
+    --border-focus: #6366F1;
+  }
+
+  /* Accessible Skip Navigation Link */
+  .skip-link {
+    position: absolute;
+    top: -999px;
+    inset-inline-start: 1rem;
+    background: #4F46E5;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 800;
+    font-size: 0.875rem;
+    z-index: 9999;
+    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+    transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .skip-link:focus {
+    top: 1rem;
+    outline: 3px solid #FCD34D;
+    outline-offset: 3px;
+  }
+
+  /* Universal WCAG 2.2 AA Focus Ring */
+  :focus-visible {
+    outline: 3px solid var(--border-focus) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* WCAG 2.2 AA Minimum Touch Target (44x44 CSS px) */
+  .touch-target-min,
+  .nav-tab,
+  .stage-pill,
+  .cat-filter-btn,
+  .grouping-pill,
+  .duration-pill,
+  .voice-opt-btn,
+  #btnHeaderOpenObs,
+  #btnHeaderOpenAchievers,
+  #btnOpenTeacherSync,
+  #langToggleBtn,
+  #focusToggleBtn {
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  /* Modern Claymorphic Card Elevation */
+  .clay-card {
+    background: #FFFFFF;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(226, 232, 240, 0.85);
+    box-shadow: 
+      0 10px 25px -5px rgba(79, 70, 229, 0.05),
+      0 8px 10px -6px rgba(0, 0, 0, 0.03),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  }
+  .clay-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 16px 30px -4px rgba(79, 70, 229, 0.10),
+      0 10px 12px -5px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+  .clay-card:active {
+    transform: translateY(1px) scale(0.995);
+  }
+
+  /* Tactile Interactive Metric Pills */
+  .clay-stat-badge {
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  /* Star Pulse & Tactile Micro-motion */
+  @keyframes starGlow {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.4)); }
+    50% { transform: scale(1.08); filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.7)); }
+  }
+  .star-glow-anim {
+    animation: starGlow 2.5s infinite ease-in-out;
+  }
+
+  /* Typography Refinement for Arabic/English */
+  body {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+  <!-- WCAG 2.2 AA Skip Link -->
+  <a href="#mainContent" class="skip-link">انتقل إلى المحتوى الرئيسي • Skip to main content</a>
 
   <!-- ================= TOP STICKY NAVBAR ================= -->
   <header class="sticky top-0 z-40 bg-white border-b border-slate-200 no-print">
@@ -761,7 +877,107 @@ Check your Browserslist config to be sure that your targets are set up correctly
   </header>
 
   <!-- ================= MAIN CONTENT CONTAINER ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main id="mainContent" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ================= EXECUTIVE KPI DASHBOARD (Phase 3 Upgrade) ================= -->
+    <section aria-labelledby="kpiDashboardHeading" class="mb-6">
+      <h2 id="kpiDashboardHeading" class="sr-only">لوحة المؤشرات والقياسات الحيوية المدرسية</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+
+        <!-- KPI 1: Total Stars Awarded -->
+        <div class="clay-card p-4 sm:p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-amber-800 tracking-wide uppercase flex items-center gap-1.5">
+              <i class="fa-solid fa-star text-amber-500 star-glow-anim" aria-hidden="true"></i>
+              <span id="kpiLabelTotalStars">إجمالي النجوم الممنوحة</span>
+            </span>
+            <span id="kpiBadgeTotalStars" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 clay-stat-badge">
+              تراكمي
+            </span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <div id="execKpiTotalStars" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              0
+            </div>
+            <span id="kpiUnitTotalStars" class="text-xs font-bold text-amber-700">⭐ نجمة تميز</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1 font-medium" id="kpiDescTotalStars">
+            مجموع رصيد التحفيز لكافة المهارات المكتسبة
+          </p>
+          <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-amber-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+        </div>
+
+        <!-- KPI 2: Mastered Skills Count -->
+        <div class="clay-card p-4 sm:p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-emerald-800 tracking-wide uppercase flex items-center gap-1.5">
+              <i class="fa-solid fa-award text-emerald-600" aria-hidden="true"></i>
+              <span id="kpiLabelMastered">الإتقان المستقل (المستوى ٣)</span>
+            </span>
+            <span id="kpiBadgeMastered" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 clay-stat-badge">
+              المستوى الأعلى
+            </span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <div id="execKpiMasteredCount" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              0
+            </div>
+            <span id="kpiUnitMastered" class="text-xs font-bold text-emerald-700">مهارة متقنة</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1 font-medium" id="kpiDescMastered">
+            المبادرة والقدوة الحسنة في بيئة المدرسة
+          </p>
+          <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-emerald-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+        </div>
+
+        <!-- KPI 3: Evaluated Students Pulse -->
+        <div class="clay-card p-4 sm:p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-indigo-800 tracking-wide uppercase flex items-center gap-1.5">
+              <i class="fa-solid fa-users-viewfinder text-indigo-600" aria-hidden="true"></i>
+              <span id="kpiLabelEvaluatedStudents">الطلاب المرصودون</span>
+            </span>
+            <span id="kpiBadgeEvaluatedStudents" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-900 clay-stat-badge">
+              الملاحظة الحية
+            </span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <div id="execKpiEvaluatedStudents" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              0
+            </div>
+            <span id="kpiUnitEvaluatedStudents" class="text-xs font-bold text-indigo-700">طالب نشط</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1 font-medium" id="kpiDescEvaluatedStudents">
+            من سجل تقييمات الفُرسان والصفوف
+          </p>
+          <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-indigo-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+        </div>
+
+        <!-- KPI 4: Active Teachers & Cloud Sync Status -->
+        <div class="clay-card p-4 sm:p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-700 tracking-wide uppercase flex items-center gap-1.5">
+              <i class="fa-solid fa-cloud-arrow-up text-amber-600" aria-hidden="true"></i>
+              <span id="kpiLabelCloudSync">مزامنة المعلمين والسحابة</span>
+            </span>
+            <span id="execKpiSyncBadge" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 clay-stat-badge">
+              محلي متزامن
+            </span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <div id="execKpiTeachersCount" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              1
+            </div>
+            <span id="kpiUnitTeachers" class="text-xs font-bold text-slate-700">معلم مشارك</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1 font-medium truncate" id="kpiDescCloudSync">
+            <span id="kpiLabelActiveTeacherPrefix">المعلم النشط:</span> <strong class="text-amber-950" id="execKpiActiveTeacherName">أ. هشام عبد الفضيل</strong>
+          </p>
+          <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-slate-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+        </div>
+
+      </div>
+    </section>
 
     <!-- ================= TAB 1: 10 LIFE SKILLS QUESTS ================= -->
     <section id="tab-skills" class="space-y-5">
@@ -2146,44 +2362,50 @@ Check your Browserslist config to be sure that your targets are set up correctly
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 pt-6 border-t border-amber-200 text-center text-xs items-end">
-            <!-- Homeroom & Life Skills Teacher -->
+            <!-- 1. Class Teachers + Grade & Class -->
             <div class="flex flex-col items-center">
-              <div class="font-bold text-slate-500 mb-2 text-[11px] sm:text-xs whitespace-nowrap" id="certSignLabel1">معلم مهارات الحياة والصف:</div>
+              <div class="font-bold text-slate-500 mb-2 text-[11px] sm:text-xs whitespace-nowrap" id="certSignLabel1">معلمو الصف • Class Teachers</div>
               <div class="h-10 flex items-center justify-center mb-1">
-                <span class="cert-signature-text text-indigo-950 font-semibold" style="transform: rotate(-1.5deg);" id="certTeacherSign">
-                  Mr. Hisham AbdelFadil
+                <span class="cert-signature-text text-indigo-950 font-semibold text-sm sm:text-base" style="transform: rotate(-1.5deg);" id="certTeacherSign">
+                  Class Teachers
                 </span>
               </div>
               <div class="w-full border-t border-slate-300 pt-1 text-[11px] font-bold text-slate-800" id="certTeacherName">
-                معلم اللغة الإنجليزية ومهارات الحياة
+                معلمو الصف (٤ أ) • Class Teachers (4A)
               </div>
             </div>
 
-            <!-- Official Date & Accreditation -->
+            <!-- 2. Bilal Ghazzawi Signature -->
             <div class="flex flex-col items-center">
-              <div class="font-bold text-slate-500 mb-2 text-[11px] sm:text-xs whitespace-nowrap" id="certSignLabel2">التاريخ والاعتماد الرسمي:</div>
+              <div class="font-bold text-slate-500 mb-2 text-[11px] sm:text-xs whitespace-nowrap" id="certSignLabel2">الاعتماد الإداري والتربوي</div>
               <div class="h-10 flex items-center justify-center mb-1">
-                <span class="font-black text-amber-900 text-xs sm:text-sm tracking-wide" id="certDateStamp">
-                  ٢٨ سبتمبر ٢٠٢٦
+                <span class="cert-signature-text text-amber-950 font-semibold text-sm sm:text-base" style="transform: rotate(-1deg);" id="certSignGhazzawi">
+                  Bilal Ghazzawi
                 </span>
               </div>
-              <div class="w-full border-t border-slate-300 pt-1 text-[11px] font-bold text-slate-500" id="certDateSub">
-                توثيق معتمد • JPIS
+              <div class="w-full border-t border-slate-300 pt-1 text-[11px] font-bold text-slate-800" id="certTitleGhazzawi">
+                أ. بلال غزاوي • Mr. Bilal Ghazzawi
               </div>
             </div>
 
-            <!-- School Administration & Principal -->
+            <!-- 3. Mohammed AlZharany Signature -->
             <div class="flex flex-col items-center">
-              <div class="font-bold text-slate-500 mb-2 text-[11px] sm:text-xs whitespace-nowrap" id="certSignLabelAdmin">إدارة المدرسة:</div>
+              <div class="font-bold text-slate-500 mb-2 text-[11px] sm:text-xs whitespace-nowrap" id="certSignLabelAdmin">إدارة المدرسة • School Principal</div>
               <div class="h-10 flex items-center justify-center mb-1">
-                <span class="cert-signature-text text-slate-900 font-semibold" style="transform: rotate(-1deg);" id="certAdminSign">
-                  Mr. Mohammed AlZahrany
+                <span class="cert-signature-text text-slate-900 font-semibold text-sm sm:text-base" style="transform: rotate(-1.5deg);" id="certAdminSign">
+                  Mohammed AlZharany
                 </span>
               </div>
               <div class="w-full border-t border-slate-300 pt-1 text-[11px] font-black text-slate-800" id="certSignAdmin">
-                مدير المدرسة
+                أ. محمد الزهراني • Mr. Mohammed AlZharany
               </div>
             </div>
+          </div>
+
+          <!-- Bottom Official Accreditation & Live Date Stamp -->
+          <div class="mt-4 pt-2 border-t border-amber-100 flex items-center justify-between text-[11px] text-slate-500 font-medium px-1">
+            <span id="certDateSub">توثيق معتمد • JPIS Official Accreditation</span>
+            <span class="font-bold text-amber-900" id="certDateStamp">٢٨ سبتمبر ٢٠٢٦</span>
           </div>
 
         </div>
@@ -14528,6 +14750,25 @@ Check your Browserslist config to be sure that your targets are set up correctly
       setCertTxt('certTitleTop', 'وسام التميز والإتقان الأخلاقي', 'Moral Excellence & Character Mastery Medal');
       setCertTxt('certMainHeading', 'شهادة فخر وإتقان المهارات الحياتية', 'Certificate of Life Skills & Character Mastery');
       
+      // Resolve precise Class and Grade for the student (e.g. 4A, 5B)
+      let resolvedClass = '';
+      if (currentClassSection && currentClassSection !== 'all') {
+        resolvedClass = currentClassSection;
+      } else if (typeof JPIS_BOYS_SECTIONS_DATA !== 'undefined' && currentSection === 'boys') {
+        for (const [clsKey, sList] of Object.entries(JPIS_BOYS_SECTIONS_DATA)) {
+          if (Array.isArray(sList) && sList.some(s => s && (s.name_ar === studentName || s.name_en === studentName))) {
+            resolvedClass = clsKey;
+            break;
+          }
+        }
+      }
+      if (!resolvedClass) {
+        resolvedClass = String(currentGrade);
+      }
+
+      const teachersTitleAr = `معلمو الصف (${resolvedClass})`;
+      const teachersTitleEn = `Class Teachers (${resolvedClass})`;
+
       if (isAr) {
         const introAr = currentSection === 'girls'
           ? 'تُمنح هذه الشهادة بكل فخر واعتزاز للبطلة المتميزة تقديراً لالتزامها الاستثنائي بآداب وسلوكيات الفرسان والقيم الإسلامية ومبادئ مدرسة JPIS.'
@@ -14540,12 +14781,16 @@ Check your Browserslist config to be sure that your targets are set up correctly
         setCertTxt('certIntroText', introAr, '');
         setCertTxt('certRecipientLabel', recipAr, '');
         setCertTxt('certReasonText', reasonAr, '');
-        setCertTxt('certSignLabel1', 'معلم مهارات الحياة والصف:', '');
-        setCertTxt('certTeacherName', 'معلم اللغة الإنجليزية ومهارات الحياة', '');
-        setCertTxt('certSignLabel2', 'التاريخ والاعتماد الرسمي:', '');
+        setCertTxt('certSignLabel1', 'معلمو الصف:', '');
+        setCertTxt('certTeacherName', teachersTitleAr, '');
+        setCertTxt('certTeacherSign', 'Class Teachers', '');
+        setCertTxt('certSignLabel2', 'الاعتماد التربوي:', '');
+        setCertTxt('certTitleGhazzawi', 'أ. بلال غزاوي', '');
+        setCertTxt('certSignGhazzawi', 'Bilal Ghazzawi', '');
         setCertTxt('certDateSub', 'توثيق معتمد • JPIS', '');
         setCertTxt('certSignLabelAdmin', 'إدارة المدرسة:', '');
-        setCertTxt('certSignAdmin', 'مدير المدرسة', '');
+        setCertTxt('certSignAdmin', 'أ. محمد الزهراني', '');
+        setCertTxt('certAdminSign', 'Mohammed AlZharany', '');
       } else {
         const introEn = 'This certificate is proudly awarded to the distinguished student in recognition of exceptional commitment to courteous character, Islamic values, and JPIS core principles.';
         const recipEn = 'Distinguished Student:';
@@ -14554,12 +14799,16 @@ Check your Browserslist config to be sure that your targets are set up correctly
         setCertTxt('certIntroText', '', introEn);
         setCertTxt('certRecipientLabel', '', recipEn);
         setCertTxt('certReasonText', '', reasonEn);
-        setCertTxt('certSignLabel1', '', 'Life Skills & Homeroom Teacher:');
-        setCertTxt('certTeacherName', '', 'ELA and Life Skills Teacher');
-        setCertTxt('certSignLabel2', '', 'Official Date & Authorization:');
+        setCertTxt('certSignLabel1', '', 'Class Teachers:');
+        setCertTxt('certTeacherName', '', teachersTitleEn);
+        setCertTxt('certTeacherSign', '', 'Class Teachers');
+        setCertTxt('certSignLabel2', '', 'Educational Authorization:');
+        setCertTxt('certTitleGhazzawi', '', 'Mr. Bilal Ghazzawi');
+        setCertTxt('certSignGhazzawi', '', 'Bilal Ghazzawi');
         setCertTxt('certDateSub', '', 'Certified Record • JPIS');
         setCertTxt('certSignLabelAdmin', '', 'School Administration:');
-        setCertTxt('certSignAdmin', '', 'School Principal');
+        setCertTxt('certSignAdmin', '', 'Mr. Mohammed AlZharany');
+        setCertTxt('certAdminSign', '', 'Mohammed AlZharany');
       }
 
       setCertTxt('btnCertPrintNow', 'طباعة الشهادة الرسمية', 'Print Official Certificate');
@@ -17390,12 +17639,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
           ? 'أظهرت إتقاناً وتطبيقاً عملياً لمهارات الحياة اليومية وحققت أعلى معايير الإحسان والانضباط الذاتي في بيئة المدرسة والمجتمع.'
           : 'أظهر إتقاناً وتطبيقاً عملياً لمهارات الحياة اليومية وحقق أعلى معايير الإحسان والانضباط الذاتي في بيئة المدرسة والمجتمع.'),
         'Demonstrated consistent practical mastery of daily life skills, achieving the highest standards of Ihsan, self-discipline, and principled leadership across the school community.');
-      setTxt('certSignLabel1', 'معلم مهارات الحياة والصف:', 'Life Skills & Homeroom Teacher:');
-      setTxt('certTeacherName', 'معلم اللغة الإنجليزية ومهارات الحياة', 'ELA and Life Skills Teacher');
-      setTxt('certSignLabel2', 'التاريخ والاعتماد الرسمي:', 'Official Date & Authorization:');
+      let currentClsForCert = (currentClassSection && currentClassSection !== 'all') ? currentClassSection : String(currentGrade);
+      setTxt('certSignLabel1', 'معلمو الصف:', 'Class Teachers:');
+      setTxt('certTeacherName', `معلمو الصف (${currentClsForCert})`, `Class Teachers (${currentClsForCert})`);
+      setTxt('certSignLabel2', 'الاعتماد التربوي:', 'Educational Authorization:');
+      setTxt('certTitleGhazzawi', 'أ. بلال غزاوي', 'Mr. Bilal Ghazzawi');
       setTxt('certDateSub', 'توثيق معتمد • JPIS', 'Certified Record • JPIS');
       setTxt('certSignLabelAdmin', 'إدارة المدرسة:', 'School Administration:');
-      setTxt('certSignAdmin', 'مدير المدرسة', 'School Principal');
+      setTxt('certSignAdmin', 'أ. محمد الزهراني', 'Mr. Mohammed AlZharany');
       setTxt('btnCertPrintNow', 'طباعة الشهادة الرسمية', 'Print Official Certificate');
       setTxt('btnCertClose', 'إغلاق', 'Close');
       
@@ -17694,7 +17945,29 @@ Check your Browserslist config to be sure that your targets are set up correctly
         ratingLbl.innerText = lang === 'ar' ? `${checkoutRating} من ٥ نجوم` : `${checkoutRating} of 5 Stars`;
       }
 
+      // Executive KPI Cards Localization
+      setTxt("kpiLabelTotalStars", "إجمالي النجوم الممنوحة", "Total Stars Awarded");
+      setTxt("kpiBadgeTotalStars", "تراكمي", "Cumulative");
+      setTxt("kpiUnitTotalStars", "⭐ نجمة تميز", "⭐ Ihsan Stars");
+      setTxt("kpiDescTotalStars", "مجموع رصيد التحفيز لكافة المهارات المكتسبة", "Total motivational stars for all acquired routines");
+
+      setTxt("kpiLabelMastered", "الإتقان المستقل (المستوى ٣)", "Independent Mastery (Lvl 3)");
+      setTxt("kpiBadgeMastered", "المستوى الأعلى", "Top Level");
+      setTxt("kpiUnitMastered", "مهارة متقنة", "Skills Mastered");
+      setTxt("kpiDescMastered", "المبادرة والقدوة الحسنة في بيئة المدرسة", "Role-model initiative across the school");
+
+      setTxt("kpiLabelEvaluatedStudents", "الطلاب المرصودون", "Evaluated Students");
+      setTxt("kpiBadgeEvaluatedStudents", "الملاحظة الحية", "Live Observation");
+      setTxt("kpiUnitEvaluatedStudents", "طالب نشط", "Active Students");
+      setTxt("kpiDescEvaluatedStudents", "من سجل تقييمات الفُرسان والصفوف", "From student observation records & rosters");
+
+      setTxt("kpiLabelCloudSync", "مزامنة المعلمين والسحابة", "Teachers & Cloud Sync");
+      setTxt("kpiUnitTeachers", "معلم مشارك", "Contributing Teachers");
+      setTxt("kpiLabelActiveTeacherPrefix", "المعلم النشط:", "Active Teacher:");
+      setTxt("kpiDashboardHeading", "لوحة المؤشرات والقياسات الحيوية المدرسية", "Executive School Vital Metrics & KPI Dashboard");
+
       renderSection13Table();
+      renderSchoolwideStats();
     }
 
     function toggleLanguage() {
@@ -18334,6 +18607,29 @@ Check your Browserslist config to be sure that your targets are set up correctly
       if (totalSkillsEl) totalSkillsEl.innerText = localMastered;
       if (totalTeachersEl) totalTeachersEl.innerText = Math.max(1, teachersSet.size);
       if (totalStudentsEl) totalStudentsEl.innerText = evaluatedStudentsSet.size;
+
+      // Sync Executive Top KPI Dashboard (Phase 3 Upgrade)
+      const execStarsEl = document.getElementById('execKpiTotalStars');
+      const execMasteredEl = document.getElementById('execKpiMasteredCount');
+      const execStudentsEl = document.getElementById('execKpiEvaluatedStudents');
+      const execTeachersEl = document.getElementById('execKpiTeachersCount');
+      const execTeacherNameEl = document.getElementById('execKpiActiveTeacherName');
+      const execSyncBadge = document.getElementById('execKpiSyncBadge');
+
+      if (execStarsEl) execStarsEl.innerText = Number(localStars) || 0;
+      if (execMasteredEl) execMasteredEl.innerText = Number(localMastered) || 0;
+      if (execStudentsEl) execStudentsEl.innerText = Number(evaluatedStudentsSet.size) || 0;
+      if (execTeachersEl) execTeachersEl.innerText = Math.max(1, teachersSet.size);
+      if (execTeacherNameEl) execTeacherNameEl.innerText = activeTeacherName || 'أ. هشام عبد الفضيل';
+      if (execSyncBadge) {
+        if (window.cachedSchoolwideTotals) {
+          execSyncBadge.innerText = currentLang === 'ar' ? 'سحابي متزامن' : 'Cloud Synced';
+          execSyncBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 clay-stat-badge';
+        } else {
+          execSyncBadge.innerText = currentLang === 'ar' ? 'محلي متزامن' : 'Local Standalone';
+          execSyncBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 clay-stat-badge';
+        }
+      }
 
       // Build Leaderboard
       if (tableBody) {
