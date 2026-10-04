@@ -26,12 +26,29 @@
 
   // Calculate real-time unified total from all devices & teachers
   window.getUnifiedStudentTotal = function (student) {
+    if (!student) return 0;
     var key = norm(student);
-    if (!key) return 0;
+    var keyAr = '';
+    var keyEn = '';
+    if (typeof translateStudentName === 'function') {
+      try {
+        keyAr = norm(translateStudentName(student, 'ar'));
+        keyEn = norm(translateStudentName(student, 'en'));
+      } catch(e) {}
+    }
+
+    function matchesStudent(cand) {
+      if (!cand) return false;
+      var cNorm = norm(cand);
+      if (cNorm === key) return true;
+      if (keyAr && cNorm === keyAr) return true;
+      if (keyEn && cNorm === keyEn) return true;
+      return false;
+    }
 
     var totalFromAwards = 0;
     (window.fursanUnifiedAwards || []).forEach(function (a) {
-      if (norm(a.student) === key) {
+      if (matchesStudent(a.student) || matchesStudent(a.studentEn) || matchesStudent(a.studentAr)) {
         totalFromAwards += (Number(a.stars) || 0);
       }
     });
@@ -39,7 +56,7 @@
     var totalFromCloudObs = 0;
     if (window.fursanCloudSyncedObservations && typeof window.fursanCloudSyncedObservations === 'object') {
       Object.values(window.fursanCloudSyncedObservations).forEach(function (obs) {
-        if (norm(obs.student) === key) {
+        if (matchesStudent(obs.student) || matchesStudent(obs.studentEn) || matchesStudent(obs.studentAr)) {
           totalFromCloudObs += (Number(obs.stars) || 0);
         }
       });
@@ -48,7 +65,7 @@
     var totalFromLeaderboard = 0;
     if (window.cachedSchoolwideLeaderboard && Array.isArray(window.cachedSchoolwideLeaderboard)) {
       window.cachedSchoolwideLeaderboard.forEach(function (row) {
-        if (norm(row.name || row.student) === key) {
+        if (matchesStudent(row.name) || matchesStudent(row.student)) {
           totalFromLeaderboard = Math.max(totalFromLeaderboard, Number(row.totalStars || row.stars || 0));
         }
       });
