@@ -46,13 +46,7 @@
       return false;
     }
 
-    var totalFromAwards = 0;
-    (window.fursanUnifiedAwards || []).forEach(function (a) {
-      if (matchesStudent(a.student) || matchesStudent(a.studentEn) || matchesStudent(a.studentAr)) {
-        totalFromAwards += (Number(a.stars) || 0);
-      }
-    });
-
+    // Calculate directly from discrete skills (5 skills * 5 stars = 25 stars per evaluated student)
     var totalFromCloudObs = 0;
     if (window.fursanCloudSyncedObservations && typeof window.fursanCloudSyncedObservations === 'object') {
       Object.values(window.fursanCloudSyncedObservations).forEach(function (obs) {
@@ -62,16 +56,7 @@
       });
     }
 
-    var totalFromLeaderboard = 0;
-    if (window.cachedSchoolwideLeaderboard && Array.isArray(window.cachedSchoolwideLeaderboard)) {
-      window.cachedSchoolwideLeaderboard.forEach(function (row) {
-        if (matchesStudent(row.name) || matchesStudent(row.student)) {
-          totalFromLeaderboard = Math.max(totalFromLeaderboard, Number(row.totalStars || row.stars || 0));
-        }
-      });
-    }
-
-    return Math.max(totalFromAwards, totalFromCloudObs, totalFromLeaderboard);
+    return totalFromCloudObs;
   };
 
   // Pull latest full database from cloud
@@ -193,7 +178,8 @@
       window.getStudentTotalStars = function (student) {
         var local = origGetStars(student);
         var unified = window.getUnifiedStudentTotal(student);
-        return Math.max(local, unified);
+        // If unified is available (25 stars for official evaluated cohort), prefer authoritative cloud observations
+        return (unified > 0) ? unified : local;
       };
       window.getStudentTotalStars._fursanWrapped = true;
     }
