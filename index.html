@@ -774,13 +774,17 @@ Check your Browserslist config to be sure that your targets are set up correctly
       border-radius: 12px !important;
     }
     .cert-theme-1 .certificate-inner-content {
-      padding: 55px 65px 50px 65px !important;
+      padding: 85px 70px 80px 70px !important;
       color: #0b1a30 !important;
     }
     .cert-theme-1 #certSchoolHeader { color: #0b1a30 !important; }
     .cert-theme-1 #certBadgeClass { background: #0b1a30 !important; color: #fef08a !important; border: 1px solid #d4af37 !important; }
     .cert-theme-1 #certTitleTop { color: #b45309 !important; }
-    .cert-theme-1 #certMainHeading { color: #0b1a30 !important; }
+    .cert-theme-1 #certMainHeading { color: #0b1a30 !important; font-size: 1.5rem !important; margin: 2px 0 6px 0 !important; }
+    .cert-theme-1 #certSchoolHeader { color: #0b1a30 !important; font-size: 0.85rem !important; }
+    .cert-theme-1 #certTitleTop { color: #b45309 !important; font-size: 0.7rem !important; margin-bottom: 2px !important; }
+    .cert-theme-1 #certIntroText { color: #334155 !important; font-size: 0.72rem !important; line-height: 1.4 !important; }
+    .cert-theme-1 #certReasonText { color: #334155 !important; font-size: 0.72rem !important; line-height: 1.4 !important; margin: 4px auto 8px auto !important; }
     .cert-theme-1 #certIntroText { color: #334155 !important; }
     .cert-theme-1 #certRecipientBox {
       background: linear-gradient(135deg, rgba(254, 243, 199, 0.7), rgba(255, 251, 235, 0.95), rgba(254, 243, 199, 0.7)) !important;
@@ -2628,27 +2632,34 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
 
   <!-- ================= PRINTABLE STUDENT CERTIFICATE MODAL ================= -->
-  <div id="studentCertificateModal" role="dialog" aria-modal="true" aria-labelledby="certMainHeading" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto" onclick="if(event.target === this) closeStudentCertificateModal()">
-    <div class="bg-white rounded-2xl max-w-4xl w-full flex flex-col shadow-2xl overflow-hidden border-4 border-amber-400">
+  <div id="studentCertificateModal" role="dialog" aria-modal="true" aria-labelledby="certMainHeading" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-start justify-center p-2 sm:p-4 md:p-6 overflow-y-auto" onclick="if(event.target === this) closeStudentCertificateModal()">
+    <div class="bg-white rounded-2xl max-w-4xl w-full flex flex-col shadow-2xl overflow-hidden border-4 border-amber-400 my-2 sm:my-4">
       
       <!-- Certificate Modal Top Toolbar: Frame Selector -->
-      <div class="p-3 sm:p-4 bg-slate-900 border-b border-slate-800 text-white flex flex-col gap-2.5">
+      <div class="sticky top-0 z-30 p-3 sm:p-4 bg-slate-950 border-b border-slate-700 text-white flex flex-col gap-2.5 shadow-md">
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-            <span class="text-xs sm:text-sm font-black text-amber-300" id="lblCertFrameSelectorTitle">🎨 إطارات الشهادات (٧ خيارات):</span>
+            <span class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></span>
+            <span class="text-xs sm:text-sm font-black text-amber-300" id="lblCertFrameSelectorTitle">🎨 اختر إطار وتصميم الشهادة (٧ خيارات معتمدة):</span>
           </div>
           
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <!-- Student Picker Dropdown inside Certificate Modal -->
-            <div class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-700 text-xs">
-              <label for="certStudentSelect" class="text-slate-400 font-bold text-[11px] whitespace-nowrap">👤 الطالب المكرم:</label>
-              <select id="certStudentSelect" onchange="openStudentCertificate(this.value)" class="bg-slate-900 text-amber-300 font-black text-xs border border-slate-600 rounded-lg px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-amber-400">
+            <div class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-600 text-xs shadow-inner">
+              <label for="certStudentSelect" class="text-amber-200 font-bold text-[11px] whitespace-nowrap">👤 الطالب المكرم:</label>
+              <select id="certStudentSelect" onchange="openStudentCertificate(this.value)" class="bg-slate-900 text-amber-300 font-black text-xs border border-slate-600 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer">
                 <!-- Populated dynamically via JS -->
               </select>
             </div>
 
-            <button onclick="closeStudentCertificateModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer text-xs" title="إغلاق">
+            <!-- Quick Print Button in Toolbar -->
+            <button onclick="printSingleCertificateNow()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl flex items-center gap-1.5 shadow transition cursor-pointer" title="طباعة فورية للشهادة">
+              <i class="fa-solid fa-print"></i>
+              <span class="hidden sm:inline">طباعة</span>
+            </button>
+
+            <!-- Close Modal Button -->
+            <button onclick="closeStudentCertificateModal()" class="w-7 h-7 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition cursor-pointer text-xs" title="إغلاق النافذة">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -15486,6 +15497,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       }
 
       const modal = document.getElementById('studentCertificateModal');
+      if (modal) modal.scrollTop = 0;
       const certArea = document.getElementById('printableCertificateArea');
       const nameEl = document.getElementById('certStudentName');
       const starsEl = document.getElementById('certStarsDisplay');
