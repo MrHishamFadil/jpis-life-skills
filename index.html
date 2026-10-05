@@ -1094,6 +1094,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
           <span id="txtHeaderHonorBtn">لوحة الشرف</span>
         </button>
 
+        <!-- Direct Certificate Button -->
+        <button id="btnHeaderOpenCert" onclick="openStudentCertificate()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-black flex items-center gap-1.5 transition active:scale-95 shadow-sm cursor-pointer" title="استعراض وطباعة شهادات التكريم بالإطارات السبعة">
+          <i class="fa-solid fa-award text-yellow-200"></i>
+          <span id="txtHeaderCertBtn">شهادات التكريم (٧ إطارات)</span>
+        </button>
+
         <!-- Teacher Identity & Stars Collection Hub Button -->
         <div class="hidden sm:flex items-center gap-1.5 bg-amber-50 border border-amber-200/90 rounded-xl px-2.5 py-1 text-xs text-amber-900 font-bold shadow-2xs">
           <i class="fa-solid fa-chalkboard-user text-amber-600"></i>
@@ -1167,6 +1173,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         <button onclick="switchTab('charter')" id="tabBtn-charter" class="nav-tab px-3 py-2.5 text-xs font-medium flex items-center gap-1.5 whitespace-nowrap transition border-b-2 border-transparent text-slate-500 hover:text-slate-700">
           <i class="fa-solid fa-scroll text-slate-400"></i>
           <span class="tab-label" data-ar="الميثاق" data-en="Charter">الميثاق</span>
+        </button>
+
+        <button onclick="openStudentCertificate()" id="tabBtn-certificates" class="nav-tab px-3 py-2.5 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition border-b-2 border-transparent text-amber-600 hover:text-amber-800 bg-amber-50/70 hover:bg-amber-100/70 rounded-t-lg">
+          <i class="fa-solid fa-award text-amber-500"></i>
+          <span class="tab-label" data-ar="شهادات التكريم (٧ إطارات)" data-en="Certificates (7 Frames)">شهادات التكريم (٧ إطارات)</span>
         </button>
 
       </div>
@@ -2079,11 +2090,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
             <i class="fa-solid fa-print text-amber-400"></i>
             <span id="printBtnText">طباعة الميثاق (A4)</span>
           </button>
-          <button type="button" onclick="selectCertificateFrame(7)" id="certFrameBtn7" class="cert-frame-option-btn p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 text-[11px] font-bold flex flex-col items-center gap-1 transition cursor-pointer hover:bg-slate-700">
-            <span class="w-full h-2.5 rounded bg-gradient-to-r from-red-400 via-amber-300 to-orange-400 shadow-sm"></span>
-            <span class="whitespace-nowrap">✨ فارس الشهر</span>
-            <span class="text-[9px] opacity-75">Retro Stars</span>
-          </button>
         </div>
       </div>
 
@@ -2627,14 +2633,25 @@ Check your Browserslist config to be sure that your targets are set up correctly
       
       <!-- Certificate Modal Top Toolbar: Frame Selector -->
       <div class="p-3 sm:p-4 bg-slate-900 border-b border-slate-800 text-white flex flex-col gap-2.5">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between flex-wrap gap-2">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-            <span class="text-xs sm:text-sm font-black text-amber-300" id="lblCertFrameSelectorTitle">🎨 اختر إطار وتصميم الشهادة (٧ باقات متكاملة):</span>
+            <span class="text-xs sm:text-sm font-black text-amber-300" id="lblCertFrameSelectorTitle">🎨 إطارات الشهادات (٧ خيارات):</span>
           </div>
-          <button onclick="closeStudentCertificateModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer text-xs" title="إغلاق">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+          
+          <div class="flex items-center gap-2">
+            <!-- Student Picker Dropdown inside Certificate Modal -->
+            <div class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-700 text-xs">
+              <label for="certStudentSelect" class="text-slate-400 font-bold text-[11px] whitespace-nowrap">👤 الطالب المكرم:</label>
+              <select id="certStudentSelect" onchange="openStudentCertificate(this.value)" class="bg-slate-900 text-amber-300 font-black text-xs border border-slate-600 rounded-lg px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-amber-400">
+                <!-- Populated dynamically via JS -->
+              </select>
+            </div>
+
+            <button onclick="closeStudentCertificateModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer text-xs" title="إغلاق">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
         </div>
         
         <!-- Options Grid -->
@@ -2673,6 +2690,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
             <span class="w-full h-2.5 rounded bg-gradient-to-r from-blue-900 via-slate-100 to-blue-900 shadow-sm"></span>
             <span class="whitespace-nowrap">🎓 الأكاديمي الكلاسيكي</span>
             <span class="text-[9px] opacity-75">Classic Scholar</span>
+          </button>
+
+          <button type="button" onclick="selectCertificateFrame(7)" id="certFrameBtn7" class="cert-frame-option-btn p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 text-[11px] font-bold flex flex-col items-center gap-1 transition cursor-pointer hover:bg-slate-700">
+            <span class="w-full h-2.5 rounded bg-gradient-to-r from-red-400 via-amber-300 to-orange-400 shadow-sm"></span>
+            <span class="whitespace-nowrap">✨ فارس الشهر</span>
+            <span class="text-[9px] opacity-75">Retro Stars</span>
           </button>
         </div>
       </div>
@@ -15428,11 +15451,39 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
 
     function openStudentCertificate(studentName) {
+      if (!studentName || typeof studentName !== 'string') {
+        studentName = 'يزن رائد حامد الراجحي';
+      }
+
       playSuccessFanfare();
       triggerConfetti();
 
       const savedFrame = parseInt(localStorage.getItem('jpis_preferred_cert_frame'), 10) || 1;
       selectCertificateFrame(savedFrame);
+
+      // Populate & sync student dropdown in certificate toolbar
+      const certSelect = document.getElementById('certStudentSelect');
+      if (certSelect) {
+        const officialStudents = [
+          'يزن رائد حامد الراجحي',
+          'فهر محمد مجدي صالح',
+          'محمد علاء طلال عقيل',
+          'محمد ري محمد رضا',
+          'فيصل احمد فيصل بغلف',
+          'ابراهيم فيصل محمدمعروف الشيباني',
+          'عبد الاله عمار المرغلاني',
+          'ادم احمد ابراهيم خبيري',
+          'سليمان عبدالرحمن الفيلالي',
+          'سلمان زهير محمد عيطة',
+          'عبد العزيز نبراس عبد العزيز طيبه'
+        ];
+        
+        certSelect.innerHTML = officialStudents.map(s => {
+          const sDisp = currentLang === 'ar' ? translateStudentName(s, 'ar') : translateStudentName(s, 'en');
+          const isSelected = (s === studentName || translateStudentName(s, 'en') === studentName || translateStudentName(s, 'ar') === studentName);
+          return `<option value="${escapeHtml(s)}" ${isSelected ? 'selected' : ''}>${escapeHtml(sDisp)} (25 ⭐)</option>`;
+        }).join('');
+      }
 
       const modal = document.getElementById('studentCertificateModal');
       const certArea = document.getElementById('printableCertificateArea');
