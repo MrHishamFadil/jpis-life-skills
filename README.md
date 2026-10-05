@@ -15,7 +15,7 @@ Source copy of this build also lives in this repository (`index.html`).
 1. Open the link on the projector or teacher laptop.
 2. Choose Arabic or English, boys or girls, and junior mode if needed.
 3. Teach the skill cards, scenarios, and exit ticket from the same page.
-4. Class stars stay on that device (browser storage). They do not sync across rooms.
+4. Stars awarded in class are saved to Firestore (`jpis-fursan`) so other classes can see the same school record.
 
 ## Notes
 
