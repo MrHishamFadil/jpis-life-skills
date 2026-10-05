@@ -2652,13 +2652,24 @@ Check your Browserslist config to be sure that your targets are set up correctly
               </select>
             </div>
 
-            <!-- Quick Print Button in Toolbar -->
+            <div class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-600 text-xs shadow-inner">
+              <label for="certFrameSelect" class="text-amber-200 font-bold text-[11px] whitespace-nowrap">🎨 الإطار:</label>
+              <select id="certFrameSelect" onchange="selectCertificateFrame(Number(this.value))" class="bg-slate-900 text-amber-300 font-black text-xs border border-slate-600 rounded-lg px-2 py-1 outline-none cursor-pointer">
+                <option value="1">1. الملكي المعتمد</option>
+                <option value="2">2. الملكي المقوس</option>
+                <option value="3">3. الباروك الفاخر</option>
+                <option value="4">4. التموجات العصرية</option>
+                <option value="5">5. الوشاح الرئاسي</option>
+                <option value="6">6. الأكاديمي الكلاسيكي</option>
+                <option value="7">7. فارس الشهر</option>
+              </select>
+            </div>
+
             <button onclick="printSingleCertificateNow()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl flex items-center gap-1.5 shadow transition cursor-pointer" title="طباعة فورية للشهادة">
               <i class="fa-solid fa-print"></i>
               <span class="hidden sm:inline">طباعة</span>
             </button>
 
-            <!-- Close Modal Button -->
             <button onclick="closeStudentCertificateModal()" class="w-7 h-7 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition cursor-pointer text-xs" title="إغلاق النافذة">
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -15410,6 +15421,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
     };
 
     function selectCertificateFrame(frameNum) {
+      const frameSelect = document.getElementById('certFrameSelect');
+      if (frameSelect) frameSelect.value = String(frameNum);
       currentCertFrame = parseInt(frameNum, 10) || 1;
       try {
         localStorage.setItem('jpis_preferred_cert_frame', currentCertFrame);
@@ -15475,7 +15488,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
       // Populate & sync student dropdown in certificate toolbar
       const certSelect = document.getElementById('certStudentSelect');
       if (certSelect) {
-        const officialStudents = [
+        const roster = (typeof getActiveStudentNames === 'function') ? getActiveStudentNames() : [];
+        const officialStudents = (roster && roster.length) ? roster : [
           'يزن رائد حامد الراجحي',
           'فهر محمد مجدي صالح',
           'محمد علاء طلال عقيل',
@@ -19726,7 +19740,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
   <!-- JPIS Fursan — School-wide Unified Star Synchronization -->
   <script src="./star-sync.js?v=1791146767429"></script>
-  <script src="./firestore-sync.js?v=20261005"></script>
+  <script src="./firestore-sync.js?v=20261005b"></script>
 
   <!-- Accessible Live Region for Dynamic Announcements -->
   <div id="a11yLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
